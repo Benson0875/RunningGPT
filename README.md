@@ -84,8 +84,18 @@ See <https://connect.garmin.com/>
 
 ## Installation
 
+### Linux/macOS
 ```bash
 pip3 install garminconnect
+```
+
+### Windows
+```powershell
+# Install Python if not already installed
+# Download from https://www.python.org/downloads/
+
+# Install required packages
+pip install garminconnect
 ```
 
 ## Authentication
@@ -95,10 +105,34 @@ The login credentials generated with Garth are valid for a year to avoid needing
 NOTE: We obtain the OAuth tokens using the consumer key and secret as the Connect app does.
 `garth.sso.OAUTH_CONSUMER` can be set manually prior to calling api.login() if someone wants to use a custom consumer key and secret.
 
+### Setting Environment Variables
+
+#### Linux/macOS
+```bash
+export EMAIL=<your garmin email>
+export PASSWORD=<your garmin password>
+export GARMINTOKENS=~/.garminconnect
+```
+
+#### Windows (PowerShell)
+```powershell
+# Temporary (current session only)
+$env:EMAIL="your_garmin_email"
+$env:PASSWORD="your_garmin_password"
+$env:GARMINTOKENS="C:\Users\$env:USERNAME\.garminconnect"
+
+# Permanent (through System Properties)
+# 1. Press Windows + R
+# 2. Type "sysdm.cpl" and press Enter
+# 3. Go to "Advanced" tab
+# 4. Click "Environment Variables"
+# 5. Under "User variables", click "New"
+# 6. Add each variable (EMAIL, PASSWORD, GARMINTOKENS)
+```
+
 ## Testing
 
-The test files use the credential tokens created by `example.py` script, so use that first.
-
+### Linux/macOS
 ```bash
 export GARMINTOKENS=~/.garminconnect
 sudo apt install python3-pytest (needed some distros)
@@ -107,10 +141,21 @@ make install-test
 make test
 ```
 
+### Windows
+```powershell
+# Set environment variable
+$env:GARMINTOKENS="C:\Users\$env:USERNAME\.garminconnect"
+
+# Install pytest
+pip install pytest
+
+# Run tests
+python -m pytest tests/
+```
+
 ## Development
 
-To create a development environment to commit code.
-
+### Linux/macOS
 ```bash
 make .venv
 source .venv/bin/activate
@@ -123,6 +168,19 @@ sudo apt install pre-commit isort black mypy
 pip3 install pre-commit
 ```
 
+### Windows
+```powershell
+# Create virtual environment
+python -m venv .venv
+.\.venv\Scripts\activate
+
+# Install development tools
+pip install pdm ruff pre-commit isort black mypy
+
+# Initialize PDM
+pdm init
+```
+
 Run checks before PR/Commit:
 
 ```bash
@@ -131,29 +189,22 @@ make lint
 make codespell
 ```
 
-## Publish
-
-To publish new package (author only)
-
-```bash
-sudo apt install twine
-vi ~/.pypirc
-[pypi]
-username = __token__
-password = <PyPI token>
-
-make publish
-```
-
 ## Example
 
 The tests provide examples of how to use the library.  
 There is a Jupyter notebook called `reference.ipynb` provided [here](https://github.com/cyberjunky/python-garminconnect/blob/master/reference.ipynb).  
 And you can check out the `example.py` code you can find [here](https://raw.githubusercontent.com/cyberjunky/python-garminconnect/master/example.py), you can run it like so:  
 
+### Linux/macOS
 ```bash
 pip3 install -r requirements-dev.txt
 ./example.py
+```
+
+### Windows
+```powershell
+pip install -r requirements-dev.txt
+python example.py
 ```
 
 ## Credits
