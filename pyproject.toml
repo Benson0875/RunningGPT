@@ -1,0 +1,93 @@
+[project]
+name = "garminconnect"
+version = "0.2.25"
+description = "Python 3 API wrapper for Garmin Connect"
+authors = [
+    {name = "Ron Klinkien", email = "ron@cyberjunky.nl"},
+]
+dependencies = [
+    "garth==0.5.2",
+    "withings-sync==4.2.5",
+]
+readme = "README.md"
+license = {text = "MIT"}
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: MacOS :: MacOS X",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: POSIX :: Linux",
+]
+keywords=["garmin connect", "api", "garmin"]
+requires-python=">=3.10"
+[project.urls]
+"Homepage" = "https://github.com/cyberjunky/python-garminconnect"
+"Bug Tracker" = "https://github.com/cyberjunky/python-garminconnect/issues"
+
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
+
+[tool.pytest.ini_options]
+addopts = "--ignore=__pypackages__ --ignore-glob=*.yaml"
+
+[tool.mypy]
+ignore_missing_imports = true
+
+[tool.isort]
+multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = 0
+use_parentheses = true
+line_length = 79
+known_first_party = "garminconnect"
+
+[project.optional-dependencies]
+dev = [
+    "ipython",
+    "ipdb",
+    "ipykernel",
+    "pandas",
+    "matplotlib",
+]
+linting = [
+    "black",
+    "ruff",
+    "mypy",
+    "isort",
+    "types-requests",
+]
+testing = [
+    "coverage",
+    "pytest",
+    "pytest-vcr",
+]
+example = [
+    "readchar",
+]
+
+[tool.pdm]
+distribution = true
+[tool.pdm.dev-dependencies]
+dev = [
+    "ipython",
+    "ipdb",
+    "ipykernel",
+    "pandas",
+    "matplotlib",
+]
+linting = [
+    "black",
+    "ruff",
+    "mypy",
+    "isort",
+    "types-requests",
+]
+testing = [
+    "coverage",
+    "pytest",
+    "pytest-vcr",
+]
+example = [
+    "readchar",
+]
