@@ -2,8 +2,16 @@
 """
 pip3 install garth requests readchar
 
-export EMAIL=<your garmin email>
-export PASSWORD=<your garmin password>
+You can set your Garmin Connect credentials in one of three ways:
+1. Environment variables:
+   export EMAIL=<your garmin email>
+   export PASSWORD=<your garmin password>
+
+2. USERNAMEPASSWORD.txt file:
+   email:your_email
+   password:your_password
+
+3. Enter them when prompted
 
 """
 import datetime
@@ -30,9 +38,29 @@ from garminconnect import (
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Load environment variables if defined
-email = os.getenv("EMAIL")
-password = os.getenv("PASSWORD")
+def read_credentials_from_file():
+    """Read credentials from USERNAMEPASSWORD.txt if it exists."""
+    try:
+        if os.path.exists("USERNAMEPASSWORD.txt"):
+            with open("USERNAMEPASSWORD.txt", "r") as f:
+                lines = f.readlines()
+                email = lines[0].split(":")[1].strip()
+                password = lines[1].split(":")[1].strip()
+                return email, password
+    except Exception as e:
+        logger.warning(f"Error reading credentials file: {e}")
+    return None, None
+
+# Load credentials from file, environment variables, or user input
+email, password = read_credentials_from_file()
+if not email or not password:
+    email = os.getenv("EMAIL")
+    password = os.getenv("PASSWORD")
+    if not email:
+        email = input("Enter your Garmin Connect email: ")
+    if not password:
+        password = getpass("Enter your Garmin Connect password: ")
+
 tokenstore = os.getenv("GARMINTOKENS") or "~/.garminconnect"
 tokenstore_base64 = os.getenv("GARMINTOKENS_BASE64") or "~/.garminconnect_base64"
 api = None
