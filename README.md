@@ -164,6 +164,8 @@ If you're new to Python, you might wonder why we use virtual environments. Here'
 ### Installation Steps
 
 #### Windows
+
+1. **Basic Setup**
 ```powershell
 # Create and activate virtual environment
 python -m venv .venv
@@ -171,19 +173,54 @@ python -m venv .venv
 
 # If you get a PowerShell execution policy error, run:
 Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+```
 
-# Install dependencies
-# Note: If you encounter errors installing requirements in the virtual environment,
-# try installing them in the global Python environment first:
-deactivate  # Exit virtual environment
-pip install --only-binary :all: lxml  # Install lxml first to avoid compilation issues
+2. **For Traditional Chinese Windows Users (or if you encounter encoding errors)**
+```powershell
+# Set UTF-8 encoding for pip
+$env:PYTHONUTF8=1
+
+# Install lxml first (to avoid compilation issues)
+pip install lxml==5.3.1 --only-binary :all:
+
+# Install other dependencies
+pip install garth==0.4.46 requests==2.31.0 python-dotenv
+pip install withings-sync==4.2.7 --no-deps
+pip install readchar>=4.0.0 mypy>=1.8.0
+pip install -r requirements-dev.txt
+```
+
+3. **For Other Windows Users**
+```powershell
+# Regular installation
 pip install -r requirements-dev.txt
 pip install -r requirements-test.txt
-
-# Then reactivate the virtual environment and verify installations
-.\.venv\Scripts\activate
-pip list  # Check if packages are available
 ```
+
+4. **Verify Installation**
+```powershell
+# Check if packages are installed correctly
+pip list
+```
+
+#### Troubleshooting Windows Installation
+
+1. **Encoding Errors**
+   - If you see Chinese characters or encoding errors during installation
+   - Use the Traditional Chinese Windows installation method above
+   - Always set `$env:PYTHONUTF8=1` before running pip commands
+
+2. **lxml Installation Issues**
+   - If lxml fails to install:
+     - Make sure you have Visual C++ Build Tools installed
+     - Or use `pip install lxml --only-binary :all:` to install pre-built wheels
+     - For Python 3.13, use lxml 5.3.1 or newer
+
+3. **withings-sync Installation Issues**
+   - If withings-sync fails to install:
+     - Install its dependencies separately as shown in the Traditional Chinese Windows steps
+     - Make sure to install withings-sync with `--no-deps` flag
+     - Version conflicts warnings are normal and can be ignored
 
 #### Linux/macOS
 ```bash
@@ -266,28 +303,69 @@ export GARMINTOKENS=~/.garminconnect
 
 ## Testing
 
-### Windows
+### Prerequisites for Testing
+Before running tests, make sure you have:
+1. All test dependencies installed:
+   ```powershell
+   pip install pytest pytest-vcr pytest-cov coverage
+   ```
+2. The `GARMINTOKENS` environment variable set:
+   ```powershell
+   # Windows (PowerShell)
+   $env:GARMINTOKENS="C:\Users\$env:USERNAME\.garminconnect"
+   
+   # Linux/macOS
+   export GARMINTOKENS=~/.garminconnect
+   ```
+
+### Running Tests
+
+#### Windows
 ```powershell
-# Set environment variable
-$env:GARMINTOKENS="C:\Users\$env:USERNAME\.garminconnect"
+# Make sure you're in your virtual environment
+.\.venv\Scripts\activate
 
-# Make sure all dependencies are installed
-# If you're in a virtual environment, ensure all required packages are installed:
-pip install garth>=0.4.45
-pip install withings-sync
-pip install pytest pytest-vcr pytest-cov coverage
+# Set environment variable and run tests in one command
+$env:GARMINTOKENS="C:\Users\$env:USERNAME\.garminconnect"; python -m pytest tests/
 
-# Run tests
-python -m pytest tests/
+# Or set environment variable permanently (recommended for development):
+# 1. Open System Properties (Windows + R, type sysdm.cpl)
+# 2. Go to Advanced tab -> Environment Variables
+# 3. Under User variables, add GARMINTOKENS with value C:\Users\YOUR_USERNAME\.garminconnect
 ```
 
-### Linux/macOS
+#### Linux/macOS
 ```bash
+# Set environment variable
 export GARMINTOKENS=~/.garminconnect
-sudo apt install python3-pytest (needed some distros)
+
+# Install pytest if needed
+sudo apt install python3-pytest  # needed on some distros
+
+# Run tests
 make install-test
 make test
 ```
+
+### Troubleshooting Tests
+
+1. **Missing GARMINTOKENS Environment Variable**
+   If you see this error:
+   ```
+   AssertionError: assert 'GARMINTOKENS' in environ(...)
+   ```
+   Make sure to set the GARMINTOKENS environment variable as shown above.
+
+2. **Test Dependencies**
+   If you encounter missing package errors:
+   ```powershell
+   pip install pytest pytest-vcr pytest-cov coverage
+   ```
+
+3. **VCR Cassette Errors**
+   If tests fail due to VCR cassette issues:
+   - Delete the `tests/cassettes` directory
+   - Run the tests again to generate new cassettes
 
 ## Development
 
