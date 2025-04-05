@@ -545,6 +545,48 @@
         .debug-panel {
             display: none !important;
         }
+
+        /* Add styles for workout details view */
+        .workout-details-view {
+            padding: 20px;
+        }
+
+        .workout-details-content {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .workout-report-text {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid var(--win11-border);
+            white-space: pre-wrap;
+            font-family: monospace;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .workout-plots-full {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid var(--win11-border);
+            text-align: center;
+        }
+
+        .workout-plots-full img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+        }
+
+        .back-to-results {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
     </style>
 </head>
 <body>
@@ -671,12 +713,24 @@
                         </div>
                     </div>
                     <div class="workout-cards">
-                        <div class="workout-card">
-                            <h3>Morning Run - March 21, 2024</h3>
-                            <p>Distance: 10km | Time: 55:30</p>
-                            <!-- Charts will be added here -->
-                        </div>
-                        <!-- More workout cards will be added here -->
+                        <!-- Workout cards will be added here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Workout Details View (Hidden by default) -->
+            <div class="workout-details-view" style="display: none;">
+                <div class="button-group" style="margin-bottom: 20px;">
+                    <button class="button button-secondary back-to-results">
+                        <i class="fas fa-arrow-left"></i> Back to Results
+                    </button>
+                </div>
+                <div class="workout-details-content">
+                    <div class="workout-report-text">
+                        <!-- Report text content will be loaded here -->
+                    </div>
+                    <div class="workout-plots-full">
+                        <!-- Full-size plot will be shown here -->
                     </div>
                 </div>
             </div>
@@ -1024,15 +1078,13 @@
                         </div>
                     `;
                     
-                    // Create the report link section with relative path
+                    // Create the report link section
                     const reportFilename = workout.report_path.split('\\').pop();
                     const reportHtml = `
                         <div class="workout-report">
-                            <a href="../workout_reports/${reportFilename}" 
-                               target="_blank" 
-                               class="report-link">
+                            <button class="report-link button primary" data-report="${reportFilename}" data-plot="${plotFilename}">
                                 <i class="fas fa-file-alt"></i> View Detailed Report
-                            </a>
+                            </button>
                         </div>
                     `;
                     
@@ -1047,6 +1099,70 @@
                     
                     workoutCardsContainer.appendChild(card);
                 });
+
+                // Add event listeners for report buttons
+                document.querySelectorAll('.report-link').forEach(button => {
+                    button.addEventListener('click', async function() {
+                        const reportFile = this.dataset.report;
+                        const plotFile = this.dataset.plot;
+                        await showWorkoutDetails(reportFile, plotFile);
+                    });
+                });
+            }
+
+            // Function to show workout details view
+            async function showWorkoutDetails(reportFile, plotFile) {
+                try {
+                    console.log('Opening workout details:', { reportFile, plotFile });
+                    
+                    // Hide results view and show details view
+                    document.querySelector('.results').style.display = 'none';
+                    const detailsView = document.querySelector('.workout-details-view');
+                    detailsView.style.display = 'block';
+
+                    // Load report text using API
+                    console.log('Reading report file:', reportFile);
+                    const reportResult = await window.pywebview.api.read_report_file(reportFile);
+                    if (!reportResult.success) {
+                        throw new Error(`Failed to load report: ${reportResult.message}`);
+                    }
+                    console.log('Report loaded, length:', reportResult.content.length);
+                    document.querySelector('.workout-report-text').textContent = reportResult.content;
+
+                    // Load plot using API
+                    console.log('Reading plot file:', plotFile);
+                    const plotResult = await window.pywebview.api.read_plot_file(plotFile);
+                    if (!plotResult.success) {
+                        throw new Error(`Failed to load plot: ${plotResult.message}`);
+                    }
+                    console.log('Plot loaded successfully');
+                    
+                    // Display plot using base64 data
+                    document.querySelector('.workout-plots-full').innerHTML = `
+                        <img src="data:image/png;base64,${plotResult.data}" 
+                             alt="Workout Analysis Plots" 
+                             style="max-width: 100%; height: auto;"
+                             onload="console.log('Plot image displayed successfully')"
+                             onerror="console.error('Failed to display plot image')"
+                             >
+                    `;
+
+                    // Add event listener for back button if not already added
+                    const backButton = document.querySelector('.back-to-results');
+                    if (!backButton.hasEventListener) {
+                        backButton.addEventListener('click', () => {
+                            detailsView.style.display = 'none';
+                            document.querySelector('.results').style.display = 'block';
+                        });
+                        backButton.hasEventListener = true;
+                    }
+                } catch (error) {
+                    console.error('Error in showWorkoutDetails:', error);
+                    showError(`Failed to load workout details: ${error.message}`);
+                    // Return to results view on error
+                    document.querySelector('.workout-details-view').style.display = 'none';
+                    document.querySelector('.results').style.display = 'block';
+                }
             }
 
             function formatDuration(seconds) {

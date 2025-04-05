@@ -1,0 +1,24 @@
+Workout Report - 2025-03-18 23:35:56
+==================================================
+
+Activity Type: Running
+Distance: 1.20 km
+Duration: 5:39
+Pace: 282.6 (4:42)
+Elevation Gain: 1.6 m
+Average Heart Rate: 163.5 bpm
+Maximum Heart Rate: 181.0 bpm
+Average Cadence: 85.0 spm
+
+Detailed Statistics:
+--------------------
+Total Distance (meters): 1199.4
+Total Time (seconds): 339.0
+Average Pace (sec/km): 282.6 (4:42)
+Fastest Pace (sec/km): 223.3 (3:43)
+Average Heart Rate: 163.5
+Maximum Heart Rate: 181.0
+Average Cadence: 85.0
+Maximum Altitude: 95.0
+Minimum Altitude: 93.4
+Altitude Difference (Enhanced Estimate): 1.6

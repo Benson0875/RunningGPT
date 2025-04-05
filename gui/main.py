@@ -327,6 +327,35 @@ class API:
     def analyze_message(self, message: str) -> Dict[str, Any]:
         return analyze_message(message)
 
+    def read_report_file(self, filename: str) -> Dict[str, Any]:
+        """Read the contents of a report file"""
+        try:
+            report_path = os.path.join('workout_reports', filename)
+            if not os.path.exists(report_path):
+                return {'success': False, 'message': f'Report file not found: {filename}'}
+            
+            with open(report_path, 'r', encoding='utf-8') as f:
+                content = f.read()
+            return {'success': True, 'content': content}
+        except Exception as e:
+            logger.error(f"Error reading report file: {str(e)}")
+            return {'success': False, 'message': str(e)}
+
+    def read_plot_file(self, filename: str) -> Dict[str, Any]:
+        """Read a plot file and return it as base64 encoded data"""
+        try:
+            plot_path = os.path.join('workout_plots', filename)
+            if not os.path.exists(plot_path):
+                return {'success': False, 'message': f'Plot file not found: {filename}'}
+            
+            with open(plot_path, 'rb') as f:
+                import base64
+                plot_data = base64.b64encode(f.read()).decode('utf-8')
+            return {'success': True, 'data': plot_data}
+        except Exception as e:
+            logger.error(f"Error reading plot file: {str(e)}")
+            return {'success': False, 'message': str(e)}
+
 def main():
     """Main entry point for the GUI application"""
     try:
