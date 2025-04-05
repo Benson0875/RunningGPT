@@ -120,13 +120,17 @@ def init_api(email, password):
         api = Garmin(email, password)
         api.login()
         return api
-    except (GarminConnectAuthenticationError, 
-            GarminConnectConnectionError,
-            GarminConnectTooManyRequestsError,
-            Exception) as err:
-        logger.error("Error initializing Garmin Connect API: %s", err)
-        if 'pytest' not in sys.modules:
-            sys.exit(1)
+    except GarminConnectAuthenticationError as err:
+        logger.error("Authentication error: %s", err)
+        raise
+    except GarminConnectConnectionError as err:
+        logger.error("Connection error: %s", err)
+        raise
+    except GarminConnectTooManyRequestsError as err:
+        logger.error("Too many requests error: %s", err)
+        raise
+    except Exception as err:
+        logger.error("Unknown error: %s", err)
         raise
 
 def extract_fit_from_zip(zip_data, output_path):

@@ -35,6 +35,7 @@
             border-radius: 12px;
             box-shadow: 0 4px 12px var(--win11-shadow);
             overflow: hidden;
+            padding-bottom: 0;
         }
 
         .wizard-header {
@@ -244,13 +245,50 @@
             background: white;
             border-radius: 8px;
             border: 1px solid var(--win11-border);
-            padding: 16px;
-            transition: transform 0.2s;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
 
         .workout-card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 8px var(--win11-shadow);
+            box-shadow: 0 4px 12px var(--win11-shadow);
+        }
+
+        .workout-details {
+            margin: 10px 0;
+        }
+
+        .workout-plots {
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        .workout-report {
+            margin-top: 15px;
+            text-align: right;
+        }
+
+        .report-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: var(--win11-accent);
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: opacity 0.2s;
+        }
+
+        .report-link:hover {
+            opacity: 0.9;
+        }
+
+        .workout-card-content {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
         }
 
         /* Navigation Buttons */
@@ -291,10 +329,14 @@
 
         /* Additional styles for new interactive elements */
         .error-message {
-            color: #d13438;
-            font-size: 12px;
-            margin-top: 4px;
+            color: #d83b01;
+            background: #fde7e9;
+            border: 1px solid #fdb8bd;
+            padding: 12px;
+            border-radius: 6px;
+            margin: 8px 0;
             display: none;
+            font-size: 14px;
         }
 
         .input-field.error {
@@ -393,9 +435,125 @@
         .send-button:active {
             transform: scale(0.95);
         }
+
+        .button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            margin-left: 8px;
+            border: 2px solid white;
+            border-top: 2px solid transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            margin-left: 8px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .button.primary {
+            background: var(--win11-accent);
+            color: white;
+        }
+
+        .button.primary:hover {
+            background: #006cc1;
+        }
+
+        .button.primary:active {
+            background: #005ba1;
+        }
+
+        .button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* Debug Panel Styles */
+        #debug-panel {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 400px;
+            height: 300px;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: #00ff00;
+            font-family: monospace;
+            font-size: 12px;
+            padding: 10px;
+            overflow-y: auto;
+            z-index: 1000;
+            border-top: 1px solid #00ff00;
+            border-left: 1px solid #00ff00;
+            display: none !important;
+        }
+        
+        #debug-panel.active {
+            display: none !important;
+        }
+        
+        #debug-messages {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            height: calc(100% - 30px);
+            overflow-y: auto;
+        }
+        
+        #debug-panel h3 {
+            color: #00ff00;
+            margin: 0 0 10px 0;
+            padding: 0;
+            font-size: 14px;
+        }
+
+        .debug-panel {
+            display: none !important;
+        }
     </style>
 </head>
 <body>
+    <!-- Add debug panel -->
+    <div id="debug-panel">
+        <h3>Debug Panel</h3>
+        <div id="debug-messages"></div>
+    </div>
+
     <div class="wizard-container">
         <div class="wizard-header">
             <h1 class="wizard-title">Running Analysis Wizard</h1>
@@ -414,18 +572,18 @@
             <!-- Step 1: Authentication -->
             <div class="auth-form">
                 <div class="input-group">
-                    <label class="input-label">Email</label>
-                    <input type="email" class="input-field" placeholder="Enter your Garmin email">
-                    <div class="error-message"></div>
+                    <label class="input-label" for="email">Email</label>
+                    <input type="email" id="email" class="input-field" placeholder="Enter your Garmin Connect email">
                 </div>
                 <div class="input-group">
-                    <label class="input-label">Password</label>
-                    <input type="password" class="input-field" placeholder="Enter your password">
-                    <div class="error-message"></div>
+                    <label class="input-label" for="password">Password</label>
+                    <input type="password" id="password" class="input-field" placeholder="Enter your Garmin Connect password">
                 </div>
-                <div class="button-group">
-                    <button class="button button-primary" id="auth-next">Next</button>
-                </div>
+                <div id="error-message" class="error-message" style="display: none;"></div>
+                <button id="next-button" class="button primary" onclick="validateAuth()">
+                    <span>Next</span>
+                    <div id="loading-spinner" class="spinner" style="display: none;"></div>
+                </button>
             </div>
 
             <!-- Step 2: Activity Selection (Hidden by default) -->
@@ -469,30 +627,31 @@
                 </div>
             </div>
 
-            <!-- Step 4: Processing (Hidden by default) -->
+            <!-- Step 4: Processing -->
             <div class="processing" style="display: none;">
                 <h2>Processing Workouts</h2>
                 <div class="progress-container">
                     <div class="progress-bar">
-                        <div class="progress-fill" style="width: 75%;"></div>
+                        <div class="progress-fill" style="width: 0%;"></div>
                     </div>
                     <div class="progress-steps">
-                        <div class="progress-step">
-                            <i class="fas fa-check-circle step-icon"></i>
+                        <div class="progress-step" data-step="download">
+                            <i class="fas fa-circle step-icon"></i>
                             <span>Downloading FIT files</span>
                         </div>
-                        <div class="progress-step">
-                            <i class="fas fa-spinner fa-spin step-icon"></i>
+                        <div class="progress-step" data-step="decode">
+                            <i class="fas fa-circle step-icon"></i>
                             <span>Decoding FIT to CSV</span>
                         </div>
-                        <div class="progress-step">
-                            <i class="far fa-circle step-icon"></i>
+                        <div class="progress-step" data-step="analyze">
+                            <i class="fas fa-circle step-icon"></i>
                             <span>Analyzing workout data</span>
                         </div>
                     </div>
                 </div>
                 <div class="button-group">
-                    <button class="button button-secondary">Cancel</button>
+                    <button class="button button-secondary cancel-button">Cancel</button>
+                    <button class="button button-primary next-button" style="display: none;">Next</button>
                 </div>
             </div>
 
@@ -525,16 +684,67 @@
     </div>
 
     <script>
+        // Debug logging function
+        function log(message) {
+            console.log(message);
+            const debugDiv = document.getElementById('debug-messages');
+            if (debugDiv) {
+                const p = document.createElement('p');
+                p.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+                debugDiv.appendChild(p);
+                debugDiv.scrollTop = debugDiv.scrollHeight;
+            }
+        }
+
+        // Initialize when the page loads
         document.addEventListener('DOMContentLoaded', function() {
+            log('=== Page Loaded ===');
+            log('Checking pywebview availability...');
+            
+            // Wait for pywebview to be available
+            const checkPyWebView = setInterval(() => {
+                if (window.pywebview) {
+                    clearInterval(checkPyWebView);
+                    log('pywebview is available');
+                    
+                    // Check if API functions are available
+                    if (window.pywebview.api) {
+                        const apiFunctions = Object.getOwnPropertyNames(Object.getPrototypeOf(window.pywebview.api));
+                        log('API functions available: ' + apiFunctions.join(', '));
+                        
+                        // Verify each required function exists
+                        const requiredFunctions = ['authenticate', 'select_activity', 'set_workout_count', 'process_workouts', 'analyze_message'];
+                        const missingFunctions = requiredFunctions.filter(fn => !apiFunctions.includes(fn));
+                        
+                        if (missingFunctions.length === 0) {
+                            log('All required API functions are available');
+                        } else {
+                            log('ERROR: Missing API functions: ' + missingFunctions.join(', '));
+                        }
+                    } else {
+                        log('ERROR: window.pywebview.api is not available');
+                    }
+                }
+            }, 100);
+            
+            // Add click event listener to Next button
+            const nextButton = document.getElementById('next-button');
+            if (nextButton) {
+                log('Next button found, adding click event listener');
+                nextButton.addEventListener('click', function(e) {
+                    log('Next button clicked');
+                    e.preventDefault(); // Prevent form submission
+                    validateAuth();
+                });
+            } else {
+                log('ERROR: Next button not found');
+            }
+            
             // State management
-            const state = {
-                currentStep: 1,
-                totalSteps: 5,
-                selectedActivity: null,
-                workoutCount: 1,
-                processingProgress: 0,
-                chatMessages: []
-            };
+            let currentStep = 1;
+            let selectedActivity = null;
+            let workoutCount = 1;
+            let workoutsData = null;
 
             // DOM Elements
             const steps = document.querySelectorAll('.step');
@@ -549,7 +759,7 @@
             // Navigation functions
             function updateStepIndicator() {
                 steps.forEach((step, index) => {
-                    step.classList.toggle('active', index + 1 === state.currentStep);
+                    step.classList.toggle('active', index + 1 === currentStep);
                 });
             }
 
@@ -561,70 +771,82 @@
             }
 
             function nextStep() {
-                if (state.currentStep < state.totalSteps) {
-                    state.currentStep++;
-                    showStep(state.currentStep);
+                if (currentStep < 5) {
+                    currentStep++;
+                    showStep(currentStep);
                 }
             }
 
             function prevStep() {
-                if (state.currentStep > 1) {
-                    state.currentStep--;
-                    showStep(state.currentStep);
+                if (currentStep > 1) {
+                    currentStep--;
+                    showStep(currentStep);
                 }
             }
 
-            // Authentication validation
-            const emailInput = document.querySelector('input[type="email"]');
-            const passwordInput = document.querySelector('input[type="password"]');
-            const authNextButton = document.getElementById('auth-next');
+            // Error message display function
+            function showError(message) {
+                log(`Showing error message: ${message}`);
+                const errorDiv = document.getElementById('error-message');
+                if (errorDiv) {
+                    errorDiv.textContent = message;
+                    errorDiv.style.display = 'block';
+                    setTimeout(() => {
+                        errorDiv.style.display = 'none';
+                    }, 5000);
+                } else {
+                    log('ERROR: Error message div not found');
+                }
+            }
 
+            // Authentication handling
             async function validateAuth() {
-                const email = emailInput.value;
-                const password = passwordInput.value;
-                const emailError = emailInput.nextElementSibling;
-                const passwordError = passwordInput.nextElementSibling;
-
-                let isValid = true;
-
-                if (!email || !email.includes('@')) {
-                    emailInput.classList.add('error');
-                    emailError.style.display = 'block';
-                    emailError.textContent = 'Please enter a valid email address';
-                    isValid = false;
-                } else {
-                    emailInput.classList.remove('error');
-                    emailError.style.display = 'none';
+                log('=== Starting Authentication Process ===');
+                
+                if (!window.pywebview || !window.pywebview.api) {
+                    log('ERROR: pywebview API is not available');
+                    showError('Connection to backend failed. Please restart the application.');
+                    return;
                 }
 
-                if (!password || password.length < 6) {
-                    passwordInput.classList.add('error');
-                    passwordError.style.display = 'block';
-                    passwordError.textContent = 'Password must be at least 6 characters';
-                    isValid = false;
-                } else {
-                    passwordInput.classList.remove('error');
-                    passwordError.style.display = 'none';
+                const nextButton = document.getElementById('next-button');
+                const loadingSpinner = document.getElementById('loading-spinner');
+
+                if (!nextButton || !loadingSpinner) {
+                    log('ERROR: Required elements not found');
+                    return;
                 }
 
-                if (isValid) {
-                    try {
-                        const result = await pywebview.api.authenticate(email, password);
-                        if (result.success) {
-                            return true;
-                        } else {
-                            passwordError.style.display = 'block';
-                            passwordError.textContent = result.message;
-                            return false;
-                        }
-                    } catch (error) {
-                        passwordError.style.display = 'block';
-                        passwordError.textContent = 'Authentication failed. Please try again.';
-                        return false;
+                try {
+                    // Show loading state
+                    nextButton.disabled = true;
+                    loadingSpinner.style.display = 'inline-block';
+                    log('Attempting authentication with backend using file credentials...');
+
+                    // Attempt authentication with any input (will be ignored)
+                    log('Calling pywebview.api.authenticate...');
+                    const result = await window.pywebview.api.authenticate('dummy@email.com', 'dummy');
+                    log(`Backend response received: ${JSON.stringify(result)}`);
+                    
+                    if (result.success) {
+                        log('Authentication successful, proceeding to next step');
+                        // Proceed to next step
+                        currentStep++;
+                        showStep(currentStep);
+                    } else {
+                        log(`Authentication failed: ${result.message}`);
+                        showError(result.message);
                     }
+                } catch (error) {
+                    log(`ERROR during authentication: ${error.message}`);
+                    log(`Error stack: ${error.stack}`);
+                    showError('Authentication failed: ' + error.message);
+                } finally {
+                    // Reset button state
+                    nextButton.disabled = false;
+                    loadingSpinner.style.display = 'none';
+                    log('=== Authentication Process Completed ===');
                 }
-
-                return false;
             }
 
             // Activity selection
@@ -636,7 +858,7 @@
                     activityButtons.forEach(btn => btn.classList.remove('selected'));
                     button.classList.add('selected');
                     const activityType = button.querySelector('span').textContent;
-                    state.selectedActivity = activityType;
+                    selectedActivity = activityType;
                     await pywebview.api.select_activity(activityType);
                 });
             });
@@ -654,10 +876,10 @@
                 const rect = slider.getBoundingClientRect();
                 const x = Math.max(0, Math.min(event.clientX - rect.left, rect.width));
                 const percentage = (x / rect.width) * 100;
-                state.workoutCount = Math.round(1 + (percentage / 100) * 19);
+                workoutCount = Math.round(1 + (percentage / 100) * 19);
                 sliderThumb.style.left = `${percentage}%`;
-                sliderValue.textContent = `${state.workoutCount} workouts`;
-                await pywebview.api.set_workout_count(state.workoutCount);
+                sliderValue.textContent = `${workoutCount} workouts`;
+                await pywebview.api.set_workout_count(workoutCount);
             }
 
             function startDragging(e) {
@@ -685,35 +907,157 @@
             // Processing simulation
             const progressFill = document.querySelector('.progress-fill');
             const progressSteps = document.querySelectorAll('.progress-step');
+            const cancelButton = document.querySelector('.cancel-button');
 
-            async function simulateProcessing() {
+            async function processWorkouts() {
+                log('=== Starting Workout Processing ===');
+                
+                const progressBar = document.querySelector('.progress-fill');
+                const progressSteps = document.querySelectorAll('.progress-step');
+                const cancelButton = document.querySelector('.cancel-button');
+                const nextButton = document.querySelector('.processing .next-button');
+                
                 try {
-                    const result = await pywebview.api.process_workouts();
+                    // Hide next button and disable cancel button during processing
+                    if (nextButton) nextButton.style.display = 'none';
+                    if (cancelButton) cancelButton.disabled = true;
+
+                    // Reset progress
+                    progressBar.style.width = '0%';
+                    progressSteps.forEach(step => {
+                        step.classList.remove('active');
+                        step.querySelector('.step-icon').className = 'fas fa-circle step-icon';
+                    });
+
+                    // Update UI to show downloading state
+                    progressBar.style.width = '33%';
+                    progressSteps[0].classList.add('active');
+                    progressSteps[0].querySelector('.step-icon').className = 'fas fa-spinner fa-spin step-icon';
+                    log('Downloading FIT files...');
+                    
+                    // Call backend to process workouts
+                    const result = await window.pywebview.api.process_workouts();
+                    log(`Backend response: ${JSON.stringify(result)}`);
+                    
                     if (result.success) {
-                        // Update workout cards with real data
-                        const workoutCardsContainer = document.querySelector('.workout-cards');
-                        workoutCardsContainer.innerHTML = ''; // Clear existing cards
+                        // Mark download as complete
+                        progressSteps[0].querySelector('.step-icon').className = 'fas fa-check-circle step-icon';
                         
-                        result.workouts.forEach(workout => {
-                            const card = document.createElement('div');
-                            card.className = 'workout-card fade-in';
-                            card.innerHTML = `
-                                <h3>${workout.type} - ${workout.date}</h3>
-                                <p>Distance: ${workout.distance}km | Time: ${workout.duration}</p>
-                                <p>Pace: ${workout.pace}</p>
-                            `;
-                            workoutCardsContainer.appendChild(card);
-                        });
+                        // Show decoding progress
+                        progressBar.style.width = '66%';
+                        progressSteps[1].classList.add('active');
+                        progressSteps[1].querySelector('.step-icon').className = 'fas fa-check-circle step-icon';
+                        log('FIT files decoded to CSV');
                         
-                        return true;
+                        // Show analysis progress
+                        progressBar.style.width = '100%';
+                        progressSteps[2].classList.add('active');
+                        progressSteps[2].querySelector('.step-icon').className = 'fas fa-check-circle step-icon';
+                        log('Workout data analyzed');
+                        
+                        // Store workout data
+                        workoutsData = result.workouts;
+                        
+                        // Show next button and update button states
+                        if (nextButton) {
+                            nextButton.style.display = 'block';
+                            nextButton.onclick = () => {
+                                currentStep++;
+                                showStep(currentStep);
+                                updateWorkoutCards(result.workouts);
+                            };
+                        }
+                        if (cancelButton) cancelButton.disabled = false;
+                        
+                        log('Processing complete. Click Next to continue.');
                     } else {
-                        alert('Failed to process workouts: ' + result.message);
-                        return false;
+                        throw new Error(result.message);
                     }
                 } catch (error) {
-                    alert('Error processing workouts. Please try again.');
-                    return false;
+                    log(`ERROR: ${error.message}`);
+                    showError(error.message);
+                    // Reset progress
+                    progressBar.style.width = '0%';
+                    progressSteps.forEach(step => {
+                        step.classList.remove('active');
+                        step.querySelector('.step-icon').className = 'fas fa-circle step-icon';
+                    });
+                    // Enable cancel button and hide next button
+                    if (cancelButton) cancelButton.disabled = false;
+                    if (nextButton) nextButton.style.display = 'none';
                 }
+            }
+
+            function updateWorkoutCards(workouts) {
+                const workoutCardsContainer = document.querySelector('.workout-cards');
+                if (!workoutCardsContainer) return;
+                
+                workoutCardsContainer.innerHTML = ''; // Clear existing cards
+                
+                workouts.forEach(workout => {
+                    const card = document.createElement('div');
+                    card.className = 'workout-card fade-in';
+                    
+                    // Format duration properly
+                    const duration = workout.duration || '0:00';  // Use the pre-formatted duration
+                    
+                    // Create the workout details section
+                    const detailsHtml = `
+                        <h3>${workout.type} - ${workout.date}</h3>
+                        <div class="workout-details">
+                            <p>Distance: ${workout.distance.toFixed(2)}km | Duration: ${duration}</p>
+                            <p>Pace: ${workout.pace} min/km</p>
+                            <p>Elevation Gain: ${workout.elevation_gain}m</p>
+                            <p>Heart Rate: ${workout.average_hr} bpm (max: ${workout.max_hr} bpm)</p>
+                            <p>Cadence: ${workout.cadence} spm</p>
+                        </div>
+                    `;
+                    
+                    // Create the plot image section with relative path
+                    const plotFilename = workout.plot_path.split('\\').pop();
+                    const plotHtml = `
+                        <div class="workout-plots">
+                            <img src="../workout_plots/${plotFilename}" 
+                                 alt="Workout Analysis Plots" 
+                                 style="width: 100%; height: auto; margin-top: 10px; border-radius: 4px;"
+                                 onerror="this.style.display='none'">
+                        </div>
+                    `;
+                    
+                    // Create the report link section with relative path
+                    const reportFilename = workout.report_path.split('\\').pop();
+                    const reportHtml = `
+                        <div class="workout-report">
+                            <a href="../workout_reports/${reportFilename}" 
+                               target="_blank" 
+                               class="report-link">
+                                <i class="fas fa-file-alt"></i> View Detailed Report
+                            </a>
+                        </div>
+                    `;
+                    
+                    // Combine all sections
+                    card.innerHTML = `
+                        <div class="workout-card-content">
+                            ${detailsHtml}
+                            ${plotHtml}
+                            ${reportHtml}
+                        </div>
+                    `;
+                    
+                    workoutCardsContainer.appendChild(card);
+                });
+            }
+
+            function formatDuration(seconds) {
+                const hours = Math.floor(seconds / 3600);
+                const minutes = Math.floor((seconds % 3600) / 60);
+                const remainingSeconds = seconds % 60;
+                
+                if (hours > 0) {
+                    return `${hours}:${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+                }
+                return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
             }
 
             // Chat functionality
@@ -757,23 +1101,21 @@
             sendButton.addEventListener('click', sendMessage);
 
             // Event listeners for navigation
-            authNextButton.addEventListener('click', () => {
-                if (validateAuth()) {
-                    nextStep();
-                }
-            });
-
             activityNextButton.addEventListener('click', () => {
-                if (state.selectedActivity) {
+                if (selectedActivity) {
                     nextStep();
                 } else {
                     alert('Please select an activity type');
                 }
             });
 
-            document.querySelector('.workout-selection .button-primary').addEventListener('click', () => {
-                simulateProcessing();
-                nextStep();
+            document.querySelector('.workout-selection .button-primary').addEventListener('click', async () => {
+                // First transition to the processing step
+                currentStep++;
+                showStep(currentStep);
+                
+                // Then start the processing
+                await processWorkouts();
             });
 
             document.querySelectorAll('.button-secondary').forEach(button => {
@@ -783,6 +1125,16 @@
             // Initialize
             showStep(1);
             initializeSlider();
+
+            // Debug Panel Toggle
+            const debugPanel = document.getElementById('debug-panel');
+            if (debugPanel) {
+                debugPanel.classList.add('active'); // Make debug panel visible by default
+                debugPanel.style.display = 'block'; // Ensure it's visible
+                log('Debug panel initialized and visible');
+            } else {
+                console.error('Debug panel element not found');
+            }
         });
     </script>
 </body>
