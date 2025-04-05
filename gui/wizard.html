@@ -587,6 +587,52 @@
             align-items: center;
             gap: 8px;
         }
+
+        .step-content {
+            position: relative;
+            min-height: 400px;
+        }
+
+        .workout-details-view {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--win11-bg);
+            z-index: 10;
+            overflow-y: auto;
+        }
+
+        .workout-details-content {
+            padding: 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .workout-report-text {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid var(--win11-border);
+            white-space: pre-wrap;
+            font-family: monospace;
+            margin-bottom: 20px;
+        }
+
+        .workout-plots-full {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid var(--win11-border);
+            text-align: center;
+        }
+
+        .workout-plots-full img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+        }
     </style>
 </head>
 <body>
@@ -611,126 +657,128 @@
                 <div class="step"></div>
             </div>
 
-            <!-- Step 1: Authentication -->
-            <div class="auth-form">
-                <div class="input-group">
-                    <label class="input-label" for="email">Email</label>
-                    <input type="email" id="email" class="input-field" placeholder="Enter your Garmin Connect email">
-                </div>
-                <div class="input-group">
-                    <label class="input-label" for="password">Password</label>
-                    <input type="password" id="password" class="input-field" placeholder="Enter your Garmin Connect password">
-                </div>
-                <div id="error-message" class="error-message" style="display: none;"></div>
-                <button id="next-button" class="button primary" onclick="validateAuth()">
-                    <span>Next</span>
-                    <div id="loading-spinner" class="spinner" style="display: none;"></div>
-                </button>
-            </div>
-
-            <!-- Step 2: Activity Selection (Hidden by default) -->
-            <div class="activity-selection" style="display: none;">
-                <h2>Select Activity Type</h2>
-                <div class="activity-grid">
-                    <div class="activity-button">
-                        <i class="fas fa-running activity-icon"></i>
-                        <span>Running</span>
+            <div class="step-content">
+                <!-- Step 1: Authentication -->
+                <div class="auth-form">
+                    <div class="input-group">
+                        <label class="input-label" for="email">Email</label>
+                        <input type="email" id="email" class="input-field" placeholder="Enter your Garmin Connect email">
                     </div>
-                    <div class="activity-button">
-                        <i class="fas fa-bicycle activity-icon"></i>
-                        <span>Cycling</span>
+                    <div class="input-group">
+                        <label class="input-label" for="password">Password</label>
+                        <input type="password" id="password" class="input-field" placeholder="Enter your Garmin Connect password">
                     </div>
-                    <div class="activity-button">
-                        <i class="fas fa-swimmer activity-icon"></i>
-                        <span>Swimming</span>
-                    </div>
-                </div>
-                <div class="button-group">
-                    <button class="button button-secondary">Back</button>
-                    <button class="button button-primary">Next</button>
-                </div>
-            </div>
-
-            <!-- Step 3: Workout Selection (Hidden by default) -->
-            <div class="workout-selection" style="display: none;">
-                <h2>Select Number of Workouts</h2>
-                <div class="workout-slider">
-                    <div class="slider-container">
-                        <span>1</span>
-                        <div class="slider">
-                            <div class="slider-thumb"></div>
-                        </div>
-                        <span>20</span>
-                    </div>
-                </div>
-                <div class="button-group">
-                    <button class="button button-secondary">Back</button>
-                    <button class="button button-primary">Next</button>
-                </div>
-            </div>
-
-            <!-- Step 4: Processing -->
-            <div class="processing" style="display: none;">
-                <h2>Processing Workouts</h2>
-                <div class="progress-container">
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 0%;"></div>
-                    </div>
-                    <div class="progress-steps">
-                        <div class="progress-step" data-step="download">
-                            <i class="fas fa-circle step-icon"></i>
-                            <span>Downloading FIT files</span>
-                        </div>
-                        <div class="progress-step" data-step="decode">
-                            <i class="fas fa-circle step-icon"></i>
-                            <span>Decoding FIT to CSV</span>
-                        </div>
-                        <div class="progress-step" data-step="analyze">
-                            <i class="fas fa-circle step-icon"></i>
-                            <span>Analyzing workout data</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="button-group">
-                    <button class="button button-secondary cancel-button">Cancel</button>
-                    <button class="button button-primary next-button" style="display: none;">Next</button>
-                </div>
-            </div>
-
-            <!-- Step 5: Results (Hidden by default) -->
-            <div class="results" style="display: none;">
-                <div class="results-container">
-                    <div class="chat-container">
-                        <h3>AI Assistant</h3>
-                        <div class="chat-messages">
-                            <!-- Chat messages will be added here -->
-                        </div>
-                        <div class="chat-input-container">
-                            <input type="text" class="input-field" placeholder="Ask about your training...">
-                            <button class="send-button">
-                                <i class="fas fa-paper-plane"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="workout-cards">
-                        <!-- Workout cards will be added here -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- Workout Details View (Hidden by default) -->
-            <div class="workout-details-view" style="display: none;">
-                <div class="button-group" style="margin-bottom: 20px;">
-                    <button class="button button-secondary back-to-results">
-                        <i class="fas fa-arrow-left"></i> Back to Results
+                    <div id="error-message" class="error-message" style="display: none;"></div>
+                    <button id="next-button" class="button primary" onclick="validateAuth()">
+                        <span>Next</span>
+                        <div id="loading-spinner" class="spinner" style="display: none;"></div>
                     </button>
                 </div>
-                <div class="workout-details-content">
-                    <div class="workout-report-text">
-                        <!-- Report text content will be loaded here -->
+
+                <!-- Step 2: Activity Selection -->
+                <div class="activity-selection" style="display: none;">
+                    <h2>Select Activity Type</h2>
+                    <div class="activity-grid">
+                        <div class="activity-button">
+                            <i class="fas fa-running activity-icon"></i>
+                            <span>Running</span>
+                        </div>
+                        <div class="activity-button">
+                            <i class="fas fa-bicycle activity-icon"></i>
+                            <span>Cycling</span>
+                        </div>
+                        <div class="activity-button">
+                            <i class="fas fa-swimmer activity-icon"></i>
+                            <span>Swimming</span>
+                        </div>
                     </div>
-                    <div class="workout-plots-full">
-                        <!-- Full-size plot will be shown here -->
+                    <div class="button-group">
+                        <button class="button button-secondary">Back</button>
+                        <button class="button button-primary">Next</button>
+                    </div>
+                </div>
+
+                <!-- Step 3: Workout Selection -->
+                <div class="workout-selection" style="display: none;">
+                    <h2>Select Number of Workouts</h2>
+                    <div class="workout-slider">
+                        <div class="slider-container">
+                            <span>1</span>
+                            <div class="slider">
+                                <div class="slider-thumb"></div>
+                            </div>
+                            <span>20</span>
+                        </div>
+                    </div>
+                    <div class="button-group">
+                        <button class="button button-secondary">Back</button>
+                        <button class="button button-primary">Next</button>
+                    </div>
+                </div>
+
+                <!-- Step 4: Processing -->
+                <div class="processing" style="display: none;">
+                    <h2>Processing Workouts</h2>
+                    <div class="progress-container">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 0%;"></div>
+                        </div>
+                        <div class="progress-steps">
+                            <div class="progress-step" data-step="download">
+                                <i class="fas fa-circle step-icon"></i>
+                                <span>Downloading FIT files</span>
+                            </div>
+                            <div class="progress-step" data-step="decode">
+                                <i class="fas fa-circle step-icon"></i>
+                                <span>Decoding FIT to CSV</span>
+                            </div>
+                            <div class="progress-step" data-step="analyze">
+                                <i class="fas fa-circle step-icon"></i>
+                                <span>Analyzing workout data</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="button-group">
+                        <button class="button button-secondary cancel-button">Cancel</button>
+                        <button class="button button-primary next-button" style="display: none;">Next</button>
+                    </div>
+                </div>
+
+                <!-- Step 5: Results -->
+                <div class="results" style="display: none;">
+                    <div class="results-container">
+                        <div class="chat-container">
+                            <h3>AI Assistant</h3>
+                            <div class="chat-messages">
+                                <!-- Chat messages will be added here -->
+                            </div>
+                            <div class="chat-input-container">
+                                <input type="text" class="input-field" placeholder="Ask about your training...">
+                                <button class="send-button">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="workout-cards">
+                            <!-- Workout cards will be added here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Workout Details View -->
+                <div class="workout-details-view" style="display: none;">
+                    <div class="button-group" style="margin-bottom: 20px;">
+                        <button class="button button-secondary back-to-results">
+                            <i class="fas fa-arrow-left"></i> Back to Results
+                        </button>
+                    </div>
+                    <div class="workout-details-content">
+                        <div class="workout-report-text">
+                            <!-- Report text content will be loaded here -->
+                        </div>
+                        <div class="workout-plots-full">
+                            <!-- Full-size plot will be shown here -->
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1115,8 +1163,16 @@
                 try {
                     console.log('Opening workout details:', { reportFile, plotFile });
                     
-                    // Hide results view and show details view
-                    document.querySelector('.results').style.display = 'none';
+                    // Hide all step content
+                    document.querySelectorAll('.step-content > div').forEach(div => {
+                        if (div.style.display !== 'none') {
+                            // Store the last visible step for returning later
+                            div.dataset.wasVisible = 'true';
+                        }
+                        div.style.display = 'none';
+                    });
+                    
+                    // Show details view
                     const detailsView = document.querySelector('.workout-details-view');
                     detailsView.style.display = 'block';
 
@@ -1151,8 +1207,28 @@
                     const backButton = document.querySelector('.back-to-results');
                     if (!backButton.hasEventListener) {
                         backButton.addEventListener('click', () => {
+                            // Hide details view
                             detailsView.style.display = 'none';
-                            document.querySelector('.results').style.display = 'block';
+                            
+                            // Hide all other views first
+                            document.querySelectorAll('.step-content > div').forEach(div => {
+                                div.style.display = 'none';
+                                // Clear the wasVisible flag
+                                delete div.dataset.wasVisible;
+                            });
+                            
+                            // Show only the results view
+                            const resultsView = document.querySelector('.results');
+                            resultsView.style.display = 'block';
+                            
+                            // Update step indicator to show we're on step 5
+                            const steps = document.querySelectorAll('.step-indicator .step');
+                            steps.forEach((step, index) => {
+                                step.classList.toggle('active', index === 4); // 4 is the index for step 5
+                            });
+                            
+                            // Update current step
+                            currentStep = 5;
                         });
                         backButton.hasEventListener = true;
                     }
@@ -1163,6 +1239,18 @@
                     document.querySelector('.workout-details-view').style.display = 'none';
                     document.querySelector('.results').style.display = 'block';
                 }
+            }
+
+            // Function to update progress dots
+            function updateProgressDots(currentStep) {
+                const dots = document.querySelectorAll('.progress-dots .dot');
+                dots.forEach((dot, index) => {
+                    if (index === currentStep) {
+                        dot.classList.add('active');
+                    } else {
+                        dot.classList.remove('active');
+                    }
+                });
             }
 
             function formatDuration(seconds) {
