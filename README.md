@@ -73,7 +73,7 @@ q -- Exit
 Make your selection: 
 ```
 
-[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/cyberjunkynl/)
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/cyberjunky/)
 
 Python 3 API wrapper for Garmin Connect.
 
@@ -129,6 +129,18 @@ This project has several key dependencies:
    - `pytest-cov`: For test coverage
    - `coverage`: For code coverage reporting
 
+   Run tests:
+   ```bash
+   # Run basic tests
+   pytest tests/
+
+   # Run tests with verbose output
+   pytest tests/ -v
+
+   # Run tests with coverage report
+   pytest tests/ -v --cov=. --cov-report=term-missing
+   ```
+
 ### Understanding Virtual Environments
 
 If you're new to Python, you might wonder why we use virtual environments. Here's why they're important:
@@ -181,7 +193,7 @@ Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
 $env:PYTHONUTF8=1
 
 # Install lxml first (to avoid compilation issues)
-pip install lxml==5.3.1 --only-binary :all:
+pip install lxml==5.2.2
 
 # Install other dependencies
 pip install garth==0.4.46 requests==2.31.0 python-dotenv
@@ -300,72 +312,6 @@ export EMAIL=<your garmin email>
 export PASSWORD=<your garmin password>
 export GARMINTOKENS=~/.garminconnect
 ```
-
-## Testing
-
-### Prerequisites for Testing
-Before running tests, make sure you have:
-1. All test dependencies installed:
-   ```powershell
-   pip install pytest pytest-vcr pytest-cov coverage
-   ```
-2. The `GARMINTOKENS` environment variable set:
-   ```powershell
-   # Windows (PowerShell)
-   $env:GARMINTOKENS="C:\Users\$env:USERNAME\.garminconnect"
-   
-   # Linux/macOS
-   export GARMINTOKENS=~/.garminconnect
-   ```
-
-### Running Tests
-
-#### Windows
-```powershell
-# Make sure you're in your virtual environment
-.\.venv\Scripts\activate
-
-# Set environment variable and run tests in one command
-$env:GARMINTOKENS="C:\Users\$env:USERNAME\.garminconnect"; python -m pytest tests/
-
-# Or set environment variable permanently (recommended for development):
-# 1. Open System Properties (Windows + R, type sysdm.cpl)
-# 2. Go to Advanced tab -> Environment Variables
-# 3. Under User variables, add GARMINTOKENS with value C:\Users\YOUR_USERNAME\.garminconnect
-```
-
-#### Linux/macOS
-```bash
-# Set environment variable
-export GARMINTOKENS=~/.garminconnect
-
-# Install pytest if needed
-sudo apt install python3-pytest  # needed on some distros
-
-# Run tests
-make install-test
-make test
-```
-
-### Troubleshooting Tests
-
-1. **Missing GARMINTOKENS Environment Variable**
-   If you see this error:
-   ```
-   AssertionError: assert 'GARMINTOKENS' in environ(...)
-   ```
-   Make sure to set the GARMINTOKENS environment variable as shown above.
-
-2. **Test Dependencies**
-   If you encounter missing package errors:
-   ```powershell
-   pip install pytest pytest-vcr pytest-cov coverage
-   ```
-
-3. **VCR Cassette Errors**
-   If tests fail due to VCR cassette issues:
-   - Delete the `tests/cassettes` directory
-   - Run the tests again to generate new cassettes
 
 ## Development
 
@@ -642,3 +588,36 @@ This project deserves more attention, but I'm struggling to free up time sometim
 ## Donations
 
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/cyberjunky/)
+
+# RunningGPT
+
+A Python project for analyzing running data from Garmin Connect.
+
+## Installation
+
+```bash
+pip install -r requirements.txt
+```
+
+## Usage
+
+```python
+python example.py
+```
+
+## Test
+
+Run tests:
+```bash
+pytest tests/
+```
+
+Run tests with verbose output:
+```bash
+pytest tests/ -v
+```
+
+Run tests with coverage report:
+```bash
+pytest tests/ -v --cov=. --cov-report=term-missing
+```

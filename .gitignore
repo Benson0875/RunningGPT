@@ -139,3 +139,6 @@ dmypy.json
 
 # Ignore folder for local testing
 ignore/
+
+# Credentials
+USERNAMEPASSWORD.txt
