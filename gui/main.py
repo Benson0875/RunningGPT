@@ -1,13 +1,18 @@
-import webview
 import os
 import json
-from typing import Dict, Any
-from pathlib import Path
-import sys
-from datetime import datetime
 import logging
+from datetime import datetime
+from pathlib import Path
+from typing import Dict, Any, List, Optional
+
+import webview
 import pandas as pd
 import matplotlib.pyplot as plt
+
+# Add the project root to Python path for imports
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from gui.ai_assistant import AIAssistant
 
 # Get the absolute path to the log file
 log_file = Path(__file__).parent.parent / 'running_gpt.log'
@@ -23,9 +28,6 @@ logging.basicConfig(
     ]
 )
 logger = logging.getLogger(__name__)
-
-# Add parent directory to path to import from root
-sys.path.append(str(Path(__file__).parent.parent))
 
 # Import existing functionality
 from garminconnect import (
@@ -44,7 +46,8 @@ state = {
     'selected_activity': None,
     'workout_count': 1,
     'client': None,
-    'workouts_data': None
+    'workouts_data': None,
+    'ai_assistant': None
 }
 
 def authenticate(email: str, password: str) -> Dict[str, Any]:
@@ -279,28 +282,14 @@ def analyze_message(message: str) -> Dict[str, Any]:
         if not state['workouts_data']:
             return {'success': False, 'message': 'No workout data available for analysis'}
 
-        # TODO: Implement AI analysis using your existing code
-        # For now, provide basic analysis based on available data
-        workouts = state['workouts_data']
-        
-        # Calculate some basic statistics
-        total_distance = sum(w['distance'] for w in workouts)
-        avg_distance = total_distance / len(workouts)
-        
-        # Calculate average pace
-        paces = []
-        for w in workouts:
-            if w['pace'] != 'N/A':
-                minutes, seconds = map(int, w['pace'].split(':'))
-                paces.append(minutes + seconds/60)
-        avg_pace = sum(paces) / len(paces) if paces else 0
-        
-        response = f"Based on your {len(workouts)} workouts:\n"
-        response += f"- Total distance: {total_distance:.2f} km\n"
-        response += f"- Average distance per workout: {avg_distance:.2f} km\n"
-        response += f"- Average pace: {int(avg_pace)}:{int((avg_pace % 1) * 60):02d} min/km"
+        # Initialize AI Assistant if not already done
+        if state['ai_assistant'] is None:
+            state['ai_assistant'] = AIAssistant()
 
-        return {'success': True, 'response': response}
+        # Process message and get response
+        result = state['ai_assistant'].analyze_message(message)
+        return result
+
     except Exception as e:
         return {'success': False, 'message': str(e)}
 

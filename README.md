@@ -1,3 +1,92 @@
+# RunningGPT - Your AI Running Coach
+
+RunningGPT is an intelligent running analysis and coaching application that combines Garmin Connect data with OpenAI's GPT to provide personalized training insights and recommendations.
+
+## Prerequisites
+
+1. **Python Installation**
+   - Download and install Python from [python.org](https://www.python.org/downloads/)
+   - During installation, make sure to check "Add Python to PATH"
+   - Recommended Python version: 3.11 or 3.12
+
+2. **OpenAI API Key**
+   - Sign up for an OpenAI account at [platform.openai.com](https://platform.openai.com)
+   - Generate an API key from your OpenAI dashboard
+   - Configure the API key in the application (see Configuration section)
+
+## Installation
+
+1. **Create and activate virtual environment**
+```bash
+# Windows
+python -m venv .venv
+.\.venv\Scripts\activate
+
+# Linux/Mac
+python -m venv .venv
+source .venv/bin/activate
+```
+
+2. **Install dependencies**
+```bash
+pip install -r requirements.txt
+```
+
+## Configuration
+
+1. **OpenAI API Setup**
+   - Locate the `config.ini` file in the root directory
+   - Replace `YOUR_API_KEY` with your actual OpenAI API key:
+   ```config.ini
+      [OpenAI]
+      #Replace YOUR_API_KEY with your actual OpenAI API key
+      api_key = YOUR_API_KEY with your actual OpenAI API key
+      [App]
+      # Model to use for chat completion
+      model = gpt-4o-2024-08-06
+      #Maximum tokens for response
+      max_tokens = 1000
+      #Temperature for response generation (0.0 - 1.0)
+      temperature = 0.7 
+   ```
+   - Save the file
+
+2. **Application Settings**
+   - The `config.ini` file also contains other settings you can customize:
+     - `model`: The OpenAI model to use (default: gpt-4-turbo-preview)
+     - `max_tokens`: Maximum response length (default: 1000)
+     - `temperature`: Response creativity (0.0-1.0, default: 0.7)
+
+## Running the Application
+
+1. **Start the GUI Application**
+```bash
+python gui/main.py
+```
+
+2. **Using the AI Assistant**
+   - Navigate through the wizard steps to analyze your running data
+   - Use the AI chat feature to:
+     - Discuss your training goals
+     - Get personalized recommendations
+     - Analyze your workout patterns
+     - Receive training plans
+
+## Features
+
+- **Data Analysis**: Automatically processes your Garmin Connect running data
+- **Visual Reports**: Generates detailed plots and statistics for each workout
+- **AI Coach**: Provides personalized training advice using OpenAI's GPT
+- **Progress Tracking**: Monitors your improvement over time
+- **Custom Training Plans**: Receives AI-generated training recommendations
+
+## Security Note
+
+- Keep your OpenAI API key secure and never share it
+- The `config.ini` file is included in `.gitignore` to prevent accidental exposure
+- Regularly rotate your API key if you suspect it has been compromised
+
+
 # Python: Garmin Connect
 
 ```bash
@@ -557,6 +646,9 @@ pip install -r requirements-test.txt
 # Then activate virtual environment and run example
 .\.venv\Scripts\activate
 python example.py
+python Get_workouts_data.py
+python decode_fit.py
+python analysis_running_CSV.py
 ```
 
 # Alternative approach if you have issues with lxml:
@@ -578,46 +670,13 @@ pip install -r requirements-dev-modified.txt
 
 # 6. Run the example
 python example.py
+python Get_workouts_data.py
+python decode_fit.py
+python analysis_running_CSV.py
 ```
 
-## Credits
 
-:heart: Special thanks to all people contributed, either by asking questions, reporting bugs, coming up with great ideas, or even by creating whole Pull Requests to add new features!
-This project deserves more attention, but I'm struggling to free up time sometimes, so thank you for your patience too!
 
-## Donations
 
-[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/cyberjunky/)
 
-# RunningGPT
 
-A Python project for analyzing running data from Garmin Connect.
-
-## Installation
-
-```bash
-pip install -r requirements.txt
-```
-
-## Usage
-
-```python
-python example.py
-```
-
-## Test
-
-Run tests:
-```bash
-pytest tests/
-```
-
-Run tests with verbose output:
-```bash
-pytest tests/ -v
-```
-
-Run tests with coverage report:
-```bash
-pytest tests/ -v --cov=. --cov-report=term-missing
-```

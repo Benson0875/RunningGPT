@@ -1,0 +1,25 @@
+# Core dependencies
+openai>=1.12.0
+python-dotenv>=1.0.0
+configparser>=6.0.0
+
+# Garmin Connect integration
+garth==0.4.46  # Specific version from dev requirements
+requests==2.31.0  # Specific version from dev requirements
+readchar>=4.0.0
+
+# Data processing and visualization
+pandas>=2.1.0  # Higher version from main requirements
+matplotlib>=3.8.0  # Higher version from main requirements
+numpy>=1.24.0
+fitparse>=1.2.0  # For parsing .FIT files
+
+# Third-party integrations
+withings-sync==4.2.7  # Specific version from dev requirements
+lxml==5.2.2  # Specific version required by withings-sync
+
+# Development tools
+pytest>=7.0.0    # For testing
+black>=23.0.0    # For code formatting
+flake8>=6.0.0    # For linting
+mypy>=1.8.0      # For type checking 

@@ -142,3 +142,47 @@ ignore/
 
 # Credentials
 USERNAMEPASSWORD.txt
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+.env
+.venv
+env/
+venv/
+ENV/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Application specific
+config.ini
+workout_reports/
+workout_plots/
+*.log
+
+# OS specific
+.DS_Store
+Thumbs.db
