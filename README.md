@@ -98,6 +98,68 @@ See <https://connect.garmin.com/>
      - MSVC v143 build tools
      - Windows 10/11 SDK
      - C++ CMake tools
+   
+   > **Why are C++ Build Tools Required?**
+   > - This project depends on `withings-sync`, which in turn requires `lxml`
+   > - `lxml` is a Python library that wraps the C libraries `libxml2` and `libxslt`
+   > - When installing `lxml` from source, it needs to compile these C extensions, requiring C++ build tools
+   > - If you want to avoid installing C++ build tools, you can use pre-built wheels:
+   >   ```powershell
+   >   pip install --only-binary :all: lxml
+   >   ```
+   > - Or follow the alternative installation methods in the Troubleshooting section
+
+### Dependencies
+
+This project has several key dependencies:
+
+1. **Core Dependencies**
+   - `garth>=0.4.45`: For Garmin Connect authentication
+   - `requests`: For making HTTP requests
+   - `readchar`: For command-line interface
+
+2. **Data Processing Dependencies**
+   - `withings-sync>=4.2.4`: For data synchronization
+     - Requires `lxml` for XML processing
+     - `lxml` needs C++ build tools for compilation from source
+
+3. **Development Dependencies**
+   - `pytest`: For testing
+   - `pytest-vcr`: For recording HTTP interactions
+   - `pytest-cov`: For test coverage
+   - `coverage`: For code coverage reporting
+
+### Understanding Virtual Environments
+
+If you're new to Python, you might wonder why we use virtual environments. Here's why they're important:
+
+1. **What is a Virtual Environment?**
+   - A virtual environment is like a separate, isolated container for your Python project
+   - It has its own Python interpreter and package installations
+   - It keeps your project's dependencies separate from other projects and your system Python
+
+2. **Why Use Virtual Environments?**
+   - **Isolation**: Different projects might need different versions of the same package
+     - Project A might need `requests==2.28.0`
+     - Project B might need `requests==2.31.0`
+     - Without virtual environments, you can only install one version globally
+   
+   - **Clean Environment**: Prevents conflicts between project dependencies
+     - No interference from globally installed packages
+     - Easy to recreate the exact same environment on another computer
+   
+   - **Project Portability**: Makes it easier to share your project
+     - All dependencies are listed in requirements files
+     - Others can recreate your exact environment
+   
+   - **System Protection**: Prevents messing up your system Python installation
+     - Experiments and tests are contained within the virtual environment
+     - Easy to delete and recreate if something goes wrong
+
+3. **When to Use Virtual Environments?**
+   - It's recommended to use a virtual environment for EVERY Python project
+   - This project specifically requires certain package versions to work correctly
+   - Virtual environments ensure these requirements don't conflict with other projects
 
 ### Installation Steps
 
@@ -135,6 +197,48 @@ The login credentials generated with Garth are valid for a year to avoid needing
 NOTE: We obtain the OAuth tokens using the consumer key and secret as the Connect app does.
 `garth.sso.OAUTH_CONSUMER` can be set manually prior to calling api.login() if someone wants to use a custom consumer key and secret.
 
+### Authentication Methods
+
+1. **Environment Variables** (Recommended)
+   - Most secure method
+   - Credentials are not stored in plain text files
+   - See setup instructions below
+
+2. **USERNAMEPASSWORD.txt** (For Development Only)
+   - Create a file named `USERNAMEPASSWORD.txt` in your project root directory
+   - Add your credentials in this format:
+     ```
+     email:your_garmin_email
+     password:your_garmin_password
+     ```
+   
+   > **⚠️ Security Warning**
+   > - This method stores credentials in plain text
+   > - NEVER commit this file to version control
+   > - NEVER share this file with others
+   > - For development/testing only
+   > 
+   > **How to Protect Your Credentials:**
+   > 1. Add `USERNAMEPASSWORD.txt` to your `.gitignore` file
+   > 2. Use file system permissions to restrict access:
+   >    ```powershell
+   >    # Windows (PowerShell)
+   >    $acl = Get-Acl "USERNAMEPASSWORD.txt"
+   >    $acl.SetAccessRuleProtection($true, $false)
+   >    $rule = New-Object System.Security.AccessControl.FileSystemAccessRule("$env:USERNAME","FullControl","Allow")
+   >    $acl.AddAccessRule($rule)
+   >    Set-Acl "USERNAMEPASSWORD.txt" $acl
+   >    ```
+   >    ```bash
+   >    # Linux/macOS
+   >    chmod 600 USERNAMEPASSWORD.txt
+   >    ```
+   > 3. Consider using environment variables in production
+
+3. **Interactive Login**
+   - If no credentials are provided through the above methods
+   - The script will prompt you to enter credentials manually
+
 ### Setting Environment Variables
 
 #### Windows (PowerShell)
@@ -145,12 +249,12 @@ $env:PASSWORD="your_garmin_password"
 $env:GARMINTOKENS="C:\Users\$env:USERNAME\.garminconnect"
 
 # Permanent (through System Properties)
-# 1. Press Windows + R
-# 2. Type "sysdm.cpl" and press Enter
-# 3. Go to "Advanced" tab
-# 4. Click "Environment Variables"
-# 5. Under "User variables", click "New"
-# 6. Add each variable (EMAIL, PASSWORD, GARMINTOKENS)
+ 1. Press Windows + R
+ 2. Type "sysdm.cpl" and press Enter
+ 3. Go to "Advanced" tab
+ 4. Click "Environment Variables"
+ 5. Under "User variables", click "New"
+ 6. Add each variable (EMAIL, PASSWORD, GARMINTOKENS)
 ```
 
 #### Linux/macOS

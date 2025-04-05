@@ -1,5 +1,5 @@
 garth>=0.4.45
 withings-sync>=4.2.4
-readchar
-requests
-mypy
+readchar>=4.0.0
+requests>=2.31.0
+mypy>=1.8.0
