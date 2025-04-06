@@ -53,7 +53,7 @@ pip install -r requirements.txt
 
 2. **Application Settings**
    - The `config.ini` file also contains other settings you can customize:
-     - `model`: The OpenAI model to use (default: gpt-4-turbo-preview)
+     - `model`: The OpenAI model to use 
      - `max_tokens`: Maximum response length (default: 1000)
      - `temperature`: Response creativity (0.0-1.0, default: 0.7)
 
