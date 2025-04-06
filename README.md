@@ -1,3 +1,92 @@
+# RunningGPT - Your AI Running Coach
+
+RunningGPT is an intelligent running analysis and coaching application that combines Garmin Connect data with OpenAI's GPT to provide personalized training insights and recommendations.
+
+## Prerequisites
+
+1. **Python Installation**
+   - Download and install Python from [python.org](https://www.python.org/downloads/)
+   - During installation, make sure to check "Add Python to PATH"
+   - Recommended Python version: 3.11 or 3.12
+
+2. **OpenAI API Key**
+   - Sign up for an OpenAI account at [platform.openai.com](https://platform.openai.com)
+   - Generate an API key from your OpenAI dashboard
+   - Configure the API key in the application (see Configuration section)
+
+## Installation
+
+1. **Create and activate virtual environment**
+```bash
+# Windows
+python -m venv .venv
+.\.venv\Scripts\activate
+
+# Linux/Mac
+python -m venv .venv
+source .venv/bin/activate
+```
+
+2. **Install dependencies**
+```bash
+pip install -r requirements.txt
+```
+
+## Configuration
+
+1. **OpenAI API Setup**
+   - Locate the `config.ini` file in the root directory
+   - Replace `YOUR_API_KEY` with your actual OpenAI API key:
+   ```config.ini
+      [OpenAI]
+      #Replace YOUR_API_KEY with your actual OpenAI API key
+      api_key = YOUR_API_KEY with your actual OpenAI API key
+      [App]
+      # Model to use for chat completion
+      model = gpt-4o-2024-08-06
+      #Maximum tokens for response
+      max_tokens = 1000
+      #Temperature for response generation (0.0 - 1.0)
+      temperature = 0.7 
+   ```
+   - Save the file
+
+2. **Application Settings**
+   - The `config.ini` file also contains other settings you can customize:
+     - `model`: The OpenAI model to use (default: gpt-4-turbo-preview)
+     - `max_tokens`: Maximum response length (default: 1000)
+     - `temperature`: Response creativity (0.0-1.0, default: 0.7)
+
+## Running the Application
+
+1. **Start the GUI Application**
+```bash
+python gui/main.py
+```
+
+2. **Using the AI Assistant**
+   - Navigate through the wizard steps to analyze your running data
+   - Use the AI chat feature to:
+     - Discuss your training goals
+     - Get personalized recommendations
+     - Analyze your workout patterns
+     - Receive training plans
+
+## Features
+
+- **Data Analysis**: Automatically processes your Garmin Connect running data
+- **Visual Reports**: Generates detailed plots and statistics for each workout
+- **AI Coach**: Provides personalized training advice using OpenAI's GPT
+- **Progress Tracking**: Monitors your improvement over time
+- **Custom Training Plans**: Receives AI-generated training recommendations
+
+## Security Note
+
+- Keep your OpenAI API key secure and never share it
+- The `config.ini` file is included in `.gitignore` to prevent accidental exposure
+- Regularly rotate your API key if you suspect it has been compromised
+
+
 # Python: Garmin Connect
 
 ```bash
@@ -73,7 +162,7 @@ q -- Exit
 Make your selection: 
 ```
 
-[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/cyberjunkynl/)
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/cyberjunky/)
 
 Python 3 API wrapper for Garmin Connect.
 
@@ -98,10 +187,86 @@ See <https://connect.garmin.com/>
      - MSVC v143 build tools
      - Windows 10/11 SDK
      - C++ CMake tools
+   
+   > **Why are C++ Build Tools Required?**
+   > - This project depends on `withings-sync`, which in turn requires `lxml`
+   > - `lxml` is a Python library that wraps the C libraries `libxml2` and `libxslt`
+   > - When installing `lxml` from source, it needs to compile these C extensions, requiring C++ build tools
+   > - If you want to avoid installing C++ build tools, you can use pre-built wheels:
+   >   ```powershell
+   >   pip install --only-binary :all: lxml
+   >   ```
+   > - Or follow the alternative installation methods in the Troubleshooting section
+
+### Dependencies
+
+This project has several key dependencies:
+
+1. **Core Dependencies**
+   - `garth>=0.4.45`: For Garmin Connect authentication
+   - `requests`: For making HTTP requests
+   - `readchar`: For command-line interface
+
+2. **Data Processing Dependencies**
+   - `withings-sync>=4.2.4`: For data synchronization
+     - Requires `lxml` for XML processing
+     - `lxml` needs C++ build tools for compilation from source
+
+3. **Development Dependencies**
+   - `pytest`: For testing
+   - `pytest-vcr`: For recording HTTP interactions
+   - `pytest-cov`: For test coverage
+   - `coverage`: For code coverage reporting
+
+   Run tests:
+   ```bash
+   # Run basic tests
+   pytest tests/
+
+   # Run tests with verbose output
+   pytest tests/ -v
+
+   # Run tests with coverage report
+   pytest tests/ -v --cov=. --cov-report=term-missing
+   ```
+
+### Understanding Virtual Environments
+
+If you're new to Python, you might wonder why we use virtual environments. Here's why they're important:
+
+1. **What is a Virtual Environment?**
+   - A virtual environment is like a separate, isolated container for your Python project
+   - It has its own Python interpreter and package installations
+   - It keeps your project's dependencies separate from other projects and your system Python
+
+2. **Why Use Virtual Environments?**
+   - **Isolation**: Different projects might need different versions of the same package
+     - Project A might need `requests==2.28.0`
+     - Project B might need `requests==2.31.0`
+     - Without virtual environments, you can only install one version globally
+   
+   - **Clean Environment**: Prevents conflicts between project dependencies
+     - No interference from globally installed packages
+     - Easy to recreate the exact same environment on another computer
+   
+   - **Project Portability**: Makes it easier to share your project
+     - All dependencies are listed in requirements files
+     - Others can recreate your exact environment
+   
+   - **System Protection**: Prevents messing up your system Python installation
+     - Experiments and tests are contained within the virtual environment
+     - Easy to delete and recreate if something goes wrong
+
+3. **When to Use Virtual Environments?**
+   - It's recommended to use a virtual environment for EVERY Python project
+   - This project specifically requires certain package versions to work correctly
+   - Virtual environments ensure these requirements don't conflict with other projects
 
 ### Installation Steps
 
 #### Windows
+
+1. **Basic Setup**
 ```powershell
 # Create and activate virtual environment
 python -m venv .venv
@@ -109,19 +274,54 @@ python -m venv .venv
 
 # If you get a PowerShell execution policy error, run:
 Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+```
 
-# Install dependencies
-# Note: If you encounter errors installing requirements in the virtual environment,
-# try installing them in the global Python environment first:
-deactivate  # Exit virtual environment
-pip install --only-binary :all: lxml  # Install lxml first to avoid compilation issues
+2. **For Traditional Chinese Windows Users (or if you encounter encoding errors)**
+```powershell
+# Set UTF-8 encoding for pip
+$env:PYTHONUTF8=1
+
+# Install lxml first (to avoid compilation issues)
+pip install lxml==5.2.2
+
+# Install other dependencies
+pip install garth==0.4.46 requests==2.31.0 python-dotenv
+pip install withings-sync==4.2.7 --no-deps
+pip install readchar>=4.0.0 mypy>=1.8.0
+pip install -r requirements-dev.txt
+```
+
+3. **For Other Windows Users**
+```powershell
+# Regular installation
 pip install -r requirements-dev.txt
 pip install -r requirements-test.txt
-
-# Then reactivate the virtual environment and verify installations
-.\.venv\Scripts\activate
-pip list  # Check if packages are available
 ```
+
+4. **Verify Installation**
+```powershell
+# Check if packages are installed correctly
+pip list
+```
+
+#### Troubleshooting Windows Installation
+
+1. **Encoding Errors**
+   - If you see Chinese characters or encoding errors during installation
+   - Use the Traditional Chinese Windows installation method above
+   - Always set `$env:PYTHONUTF8=1` before running pip commands
+
+2. **lxml Installation Issues**
+   - If lxml fails to install:
+     - Make sure you have Visual C++ Build Tools installed
+     - Or use `pip install lxml --only-binary :all:` to install pre-built wheels
+     - For Python 3.13, use lxml 5.3.1 or newer
+
+3. **withings-sync Installation Issues**
+   - If withings-sync fails to install:
+     - Install its dependencies separately as shown in the Traditional Chinese Windows steps
+     - Make sure to install withings-sync with `--no-deps` flag
+     - Version conflicts warnings are normal and can be ignored
 
 #### Linux/macOS
 ```bash
@@ -135,6 +335,50 @@ The login credentials generated with Garth are valid for a year to avoid needing
 NOTE: We obtain the OAuth tokens using the consumer key and secret as the Connect app does.
 `garth.sso.OAUTH_CONSUMER` can be set manually prior to calling api.login() if someone wants to use a custom consumer key and secret.
 
+### Authentication Methods
+
+1. **Environment Variables** (Recommended)
+   - Most secure method
+   - Credentials are not stored in plain text files
+   - See setup instructions below
+
+2. **USERNAMEPASSWORD.txt** (For Development Only)
+   - Create a file named `USERNAMEPASSWORD.txt` in your project root directory
+   - Add your credentials in this format:
+     ```
+     email:your_garmin_email
+     password:your_garmin_password
+     ```
+   
+   > **⚠️ Security Warning**
+   > - This method stores credentials in plain text
+   > - NEVER commit this file to version control
+   > - NEVER share this file with others
+   > - For development/testing only
+   > 
+   > **How to Protect Your Credentials:**
+   > 1. Add `USERNAMEPASSWORD.txt` to your `.gitignore` file
+   > 2. Use file system permissions to restrict access:
+   >    ```powershell
+   >    # Windows (PowerShell)
+   >    $acl = Get-Acl "USERNAMEPASSWORD.txt"
+   >    $acl.SetAccessRuleProtection($true, $false)
+   >    $rule = New-Object System.Security.AccessControl.FileSystemAccessRule("$env:USERNAME","FullControl","Allow")
+   >    $acl.AddAccessRule($rule)
+   >    Set-Acl "USERNAMEPASSWORD.txt" $acl
+   >    ```
+   >    ```bash
+   >    # Linux/macOS
+   >    chmod 600 USERNAMEPASSWORD.txt
+   >    ```
+   > 3. Consider using environment variables in production
+
+3. **Interactive Login**
+   - If no credentials are provided through the above methods
+   - The script will prompt you to enter credentials manually
+   
+4. **Environment Variables** (Optional, for development)
+   You can set environment variables to avoid entering credentials repeatedly during development:
 ### Setting Environment Variables
 
 #### Windows (PowerShell)
@@ -145,12 +389,12 @@ $env:PASSWORD="your_garmin_password"
 $env:GARMINTOKENS="C:\Users\$env:USERNAME\.garminconnect"
 
 # Permanent (through System Properties)
-# 1. Press Windows + R
-# 2. Type "sysdm.cpl" and press Enter
-# 3. Go to "Advanced" tab
-# 4. Click "Environment Variables"
-# 5. Under "User variables", click "New"
-# 6. Add each variable (EMAIL, PASSWORD, GARMINTOKENS)
+ 1. Press Windows + R
+ 2. Type "sysdm.cpl" and press Enter
+ 3. Go to "Advanced" tab
+ 4. Click "Environment Variables"
+ 5. Under "User variables", click "New"
+ 6. Add each variable (EMAIL, PASSWORD, GARMINTOKENS)
 ```
 
 #### Linux/macOS
@@ -158,31 +402,6 @@ $env:GARMINTOKENS="C:\Users\$env:USERNAME\.garminconnect"
 export EMAIL=<your garmin email>
 export PASSWORD=<your garmin password>
 export GARMINTOKENS=~/.garminconnect
-```
-
-## Testing
-
-### Windows
-```powershell
-# Set environment variable
-$env:GARMINTOKENS="C:\Users\$env:USERNAME\.garminconnect"
-
-# Make sure all dependencies are installed
-# If you're in a virtual environment, ensure all required packages are installed:
-pip install garth>=0.4.45
-pip install withings-sync
-pip install pytest pytest-vcr pytest-cov coverage
-
-# Run tests
-python -m pytest tests/
-```
-
-### Linux/macOS
-```bash
-export GARMINTOKENS=~/.garminconnect
-sudo apt install python3-pytest (needed some distros)
-make install-test
-make test
 ```
 
 ## Development
@@ -429,6 +648,9 @@ pip install -r requirements-test.txt
 # Then activate virtual environment and run example
 .\.venv\Scripts\activate
 python example.py
+python Get_workouts_data.py
+python decode_fit.py
+python analysis_running_CSV.py
 ```
 
 # Alternative approach if you have issues with lxml:
@@ -450,13 +672,13 @@ pip install -r requirements-dev-modified.txt
 
 # 6. Run the example
 python example.py
+python Get_workouts_data.py
+python decode_fit.py
+python analysis_running_CSV.py
 ```
 
-## Credits
 
-:heart: Special thanks to all people contributed, either by asking questions, reporting bugs, coming up with great ideas, or even by creating whole Pull Requests to add new features!
-This project deserves more attention, but I'm struggling to free up time sometimes, so thank you for your patience too!
 
-## Donations
 
-[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/cyberjunky/)
+
+
