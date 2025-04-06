@@ -20,13 +20,31 @@ RunningGPT is an intelligent running analysis and coaching application that comb
    - Generate an API key from your OpenAI dashboard
    - Configure the API key in the application (see Configuration section)
 
+3. **Visual C++ Build Tools** (Required for Windows)
+   - Download from [Visual Studio Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/)
+   - During installation, select "Desktop development with C++"
+   - Required components:
+     - MSVC v143 build tools
+     - Windows 10/11 SDK
+     - C++ CMake tools
+    **Why are C++ Build Tools Required?**
+   > - This project depends on `withings-sync`, which in turn requires `lxml`
+   > - `lxml` is a Python library that wraps the C libraries `libxml2` and `libxslt`
+   > - When installing `lxml` from source, it needs to compile these C extensions, requiring C++ build tools
+   > - If you want to avoid installing C++ build tools, you can use pre-built wheels:
+   >   ```powershell
+   >   pip install --only-binary :all: lxml
+   >   ```
+   > - Or follow the alternative installation methods in the Troubleshooting section
+
 ## Installation
 
 1. **Create and activate virtual environment**
-```bash
-# Windows
+```
+# Windows powershell
 python -m venv .venv
 .\.venv\Scripts\activate
+
 
 # Linux/Mac
 python -m venv .venv
@@ -38,6 +56,8 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
+<<<<<<< Updated upstream
+=======
 ## Configuration
 
 1. **OpenAI API Setup**
@@ -59,7 +79,7 @@ pip install -r requirements.txt
 
 2. **Application Settings**
    - The `config.ini` file also contains other settings you can customize:
-     - `model`: The OpenAI model to use 
+     - `model`: The OpenAI model to use (default: gpt-4-turbo-preview)
      - `max_tokens`: Maximum response length (default: 1000)
      - `temperature`: Response creativity (0.0-1.0, default: 0.7)
 
@@ -70,19 +90,7 @@ pip install -r requirements.txt
 python gui/main.py
 ```
 
-2. **Test Mode**
-```bash
-# Run the application in test mode to skip authentication and directly view results
-python gui/main.py --test
-
-# The test mode will:
-# - Skip the authentication process
-# - Load existing workout data
-# - Jump directly to the results page
-# - Display workout cards and analysis
-```
-
-3. **Using the AI Assistant**
+2. **Using the AI Assistant**
    - Navigate through the wizard steps to analyze your running data
    - Use the AI chat feature to:
      - Discuss your training goals
@@ -158,6 +166,7 @@ This project has several key dependencies:
    - `coverage`: For code coverage reporting
 
 
+>>>>>>> Stashed changes
 ### Understanding Virtual Environments
 
 If you're new to Python, you might wonder why we use virtual environments. Here's why they're important:
@@ -192,27 +201,103 @@ If you're new to Python, you might wonder why we use virtual environments. Here'
    - This project specifically requires certain package versions to work correctly
    - Virtual environments ensure these requirements don't conflict with other projects
 
-### Installation Steps
 
-#### Windows
+## Configuration
 
-1. **Basic Setup**
-```powershell
-# Create and activate virtual environment
-python -m venv .venv
-.\.venv\Scripts\activate
+1. **OpenAI API Setup**
+   - Locate the `config.ini` file in the root directory
+   - Replace `YOUR_API_KEY` with your actual OpenAI API key:
+   ```config.ini
+      [OpenAI]
+      #Replace YOUR_API_KEY with your actual OpenAI API key
+      api_key = YOUR_API_KEY with your actual OpenAI API key
+      [App]
+      # Model to use for chat completion
+      model = gpt-4o-2024-08-06
+      #Maximum tokens for response
+      max_tokens = 1000
+      #Temperature for response generation (0.0 - 1.0)
+      temperature = 0.7 
+   ```
+   - Save the file
 
-# If you get a PowerShell execution policy error, run:
-Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+2. **Application Settings**
+   - The `config.ini` file also contains other settings you can customize:
+     - `model`: The OpenAI model to use 
+     - `max_tokens`: Maximum response length (default: 1000)
+     - `temperature`: Response creativity (0.0-1.0, default: 0.7)
+
+## Running the Application
+
+1. **Start the GUI Application**
+```bash
+python gui/main.py
 ```
 
-2. **For Traditional Chinese Windows Users (or if you encounter encoding errors)**
+2. **Test Mode**
+```bash
+# Run the application in test mode to skip authentication and directly view results
+python gui/main.py --test
+
+# The test mode will:
+# - Skip the authentication process
+# - Load existing workout data
+# - Jump directly to the results page
+# - Display workout cards and analysis
+```
+
+3. **Using the AI Assistant**
+   - Navigate through the wizard steps to analyze your running data
+   - Use the AI chat feature to:
+     - Discuss your training goals
+     - Get personalized recommendations
+     - Analyze your workout patterns
+     - Receive training plans
+
+## Features
+
+- **Data Analysis**: Automatically processes your Garmin Connect running data
+- **Visual Reports**: Generates detailed plots and statistics for each workout
+- **AI Coach**: Provides personalized training advice using OpenAI's GPT
+- **Progress Tracking**: Monitors your improvement over time
+- **Custom Training Plans**: Receives AI-generated training recommendations
+
+## Security Note
+
+- Keep your OpenAI API key secure and never share it
+- The `config.ini` file is included in `.gitignore` to prevent accidental exposure
+- Regularly rotate your API key if you suspect it has been compromised
+
+
+ 
+
+### Dependencies remark
+
+This project has several key dependencies:
+
+1. **Core Dependencies**
+   - `garth>=0.4.45`: For Garmin Connect authentication
+   - `requests`: For making HTTP requests
+   - `readchar`: For command-line interface
+
+2. **Data Processing Dependencies**
+   - `withings-sync>=4.2.4`: For data synchronization
+     - Requires `lxml` for XML processing
+     - `lxml` needs C++ build tools for compilation from source
+
+3. **Development Dependencies**
+   - `pytest`: For testing
+   - `pytest-vcr`: For recording HTTP interactions
+   - `pytest-cov`: For test coverage
+   - `coverage`: For code coverage reporting
+
+**For Traditional Chinese Windows Users (or if you encounter encoding errors)**
 ```powershell
 # Set UTF-8 encoding for pip
 $env:PYTHONUTF8=1
 
 # Install lxml first (to avoid compilation issues)
-pip install lxml==5.2.2
+pip install lxml
 
 
 # Install other dependencies
