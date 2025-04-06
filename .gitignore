@@ -186,3 +186,5 @@ workout_plots/
 # OS specific
 .DS_Store
 Thumbs.db
+*.fit
+*.csv
