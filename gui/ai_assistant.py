@@ -69,7 +69,7 @@ class AIAssistant:
 5. Suggest Periodized training schedule, include the running, rest, gym workout, eating plan
 6. Be encouraging while maintaining professional expertise
 7. If the user do not provide the goal, suggest the goal based on the user's profile and the workout reports.
-Base your analysis and advice on the workout reports provided in the conversation context. 請使用台灣在地繁體中文zh-TW 進行對話"""
+Base your analysis and advice on the workout reports provided in the conversation context. """
 
     def analyze_message(self, user_message: str) -> Dict[str, str]:
         """Process user message and return AI response"""
