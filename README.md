@@ -2,6 +2,12 @@
 
 RunningGPT is an intelligent running analysis and coaching application that combines Garmin Connect data with OpenAI's GPT to provide personalized training insights and recommendations.
 
+<img src="screenshot01.png" alt="Chat" width="700"/>
+
+<img src="screenshot02.png" alt="Chat" width="700"/>
+
+
+
 ## Prerequisites
 
 1. **Python Installation**
@@ -64,7 +70,19 @@ pip install -r requirements.txt
 python gui/main.py
 ```
 
-2. **Using the AI Assistant**
+2. **Test Mode**
+```bash
+# Run the application in test mode to skip authentication and directly view results
+python gui/main.py --test
+
+# The test mode will:
+# - Skip the authentication process
+# - Load existing workout data
+# - Jump directly to the results page
+# - Display workout cards and analysis
+```
+
+3. **Using the AI Assistant**
    - Navigate through the wizard steps to analyze your running data
    - Use the AI chat feature to:
      - Discuss your training goals

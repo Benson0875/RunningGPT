@@ -181,6 +181,9 @@ ENV/
 config.ini
 workout_reports/
 workout_plots/
+workouts/
+workputs_csv/
+USERNAMEPASSWORD.txt
 *.log
 
 # OS specific
