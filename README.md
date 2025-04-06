@@ -86,6 +86,14 @@ pip install -r requirements.txt
 
 1. **Start the GUI Application**
 ```bash
+# Windows powershell
+python -m venv .venv
+.\.venv\Scripts\activate
+python gui/main.py
+
+# Linux/Mac
+python -m venv .venv
+source .venv/bin/activate
 python gui/main.py
 ```
 
