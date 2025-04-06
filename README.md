@@ -229,7 +229,15 @@ If you're new to Python, you might wonder why we use virtual environments. Here'
 ## Running the Application
 
 1. **Start the GUI Application**
-```bash
+```
+# Windows powershell
+python -m venv .venv
+.\.venv\Scripts\activate
+python gui/main.py
+
+# Linux/Mac
+python -m venv .venv
+source .venv/bin/activate
 python gui/main.py
 ```
 
