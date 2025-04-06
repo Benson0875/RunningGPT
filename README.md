@@ -54,39 +54,6 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-If you're new to Python, you might wonder why we use virtual environments. Here's why they're important:
-
-- **What is a Virtual Environment?**
-   - A virtual environment is like a separate, isolated container for your Python project
-   - It has its own Python interpreter and package installations
-   - It keeps your project's dependencies separate from other projects and your system Python
-
-- **Why Use Virtual Environments?**
-   - **Isolation**: Different projects might need different versions of the same package
-     - Project A might need `requests==2.28.0`
-     - Project B might need `requests==2.31.0`
-     - Without virtual environments, you can only install one version globally
-   
-   - **Clean Environment**: Prevents conflicts between project dependencies
-     - No interference from globally installed packages
-     - Easy to recreate the exact same environment on another computer
-   
-   - **Project Portability**: Makes it easier to share your project
-     - All dependencies are listed in requirements files
-     - Others can recreate your exact environment
-   
-   - **System Protection**: Prevents messing up your system Python installation
-     - Experiments and 
-     
-     s are contained within the virtual environment
-     - Easy to delete and recreate if something goes wrong
-
-- **When to Use Virtual Environments?**
-   - It's recommended to use a virtual environment for EVERY Python project
-   - This project specifically requires certain package versions to work correctly
-   - Virtual environments ensure these requirements don't conflict with other projects
-
-
 ## Configuration
 
 1. **OpenAI API Setup**
@@ -138,7 +105,7 @@ python gui/main.py --test
 # - Display workout cards and analysis
 ```
 
-3. **Using the AI Assistant**
+## Using the AI Assistant**
    - Navigate through the wizard steps to analyze your running data
    - Use the AI chat feature to:
      - Discuss your training goals
@@ -159,6 +126,43 @@ python gui/main.py --test
 - Keep your OpenAI API key secure and never share it
 - The `config.ini` file is included in `.gitignore` to prevent accidental exposure
 - Regularly rotate your API key if you suspect it has been compromised
+
+   
+
+
+### Understanding Virtual Environments
+
+If you're new to Python, you might wonder why we use virtual environments. Here's why they're important:
+
+- **What is a Virtual Environment?**
+   - A virtual environment is like a separate, isolated container for your Python project
+   - It has its own Python interpreter and package installations
+   - It keeps your project's dependencies separate from other projects and your system Python
+
+- **Why Use Virtual Environments?**
+   - **Isolation**: Different projects might need different versions of the same package
+     - Project A might need `requests==2.28.0`
+     - Project B might need `requests==2.31.0`
+     - Without virtual environments, you can only install one version globally
+   
+   - **Clean Environment**: Prevents conflicts between project dependencies
+     - No interference from globally installed packages
+     - Easy to recreate the exact same environment on another computer
+   
+   - **Project Portability**: Makes it easier to share your project
+     - All dependencies are listed in requirements files
+     - Others can recreate your exact environment
+   
+   - **System Protection**: Prevents messing up your system Python installation
+     - Experiments and 
+     
+     s are contained within the virtual environment
+     - Easy to delete and recreate if something goes wrong
+
+- **When to Use Virtual Environments?**
+   - It's recommended to use a virtual environment for EVERY Python project
+   - This project specifically requires certain package versions to work correctly
+   - Virtual environments ensure these requirements don't conflict with other projects
 
 
 
