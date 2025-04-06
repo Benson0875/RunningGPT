@@ -8,10 +8,9 @@ pytest>=7.0.0    # For testing
 black>=23.0.0    # For code formatting
 flake8>=6.0.0    # For linting
 
-lxml==5.2.2; python_version < "3.13"
-lxml==5.3.1; python_version >= "3.13"
+lxml
 garth==0.4.46
-withings-sync==4.2.7
+withings-sync
 readchar>=4.0.0
 requests==2.31.0
 mypy>=1.8.0

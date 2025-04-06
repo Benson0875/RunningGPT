@@ -15,8 +15,10 @@ numpy>=1.24.0
 fitparse>=1.2.0  # For parsing .FIT files
 
 # Third-party integrations
-withings-sync==4.2.7  # Specific version from dev requirements
-lxml==5.2.2  # Specific version required by withings-sync
+#withings-sync==4.2.7  # Specific version from dev requirements
+#lxml==5.2.2  # Specific version required by withings-sync
+withings-sync
+lxml
 
 # Development tools
 pytest>=7.0.0    # For testing
