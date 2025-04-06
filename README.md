@@ -20,13 +20,31 @@ RunningGPT is an intelligent running analysis and coaching application that comb
    - Generate an API key from your OpenAI dashboard
    - Configure the API key in the application (see Configuration section)
 
+3. **Visual C++ Build Tools** (Required for Windows)
+   - Download from [Visual Studio Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/)
+   - During installation, select "Desktop development with C++"
+   - Required components:
+     - MSVC v143 build tools
+     - Windows 10/11 SDK
+     - C++ CMake tools
+    **Why are C++ Build Tools Required?**
+   > - This project depends on `withings-sync`, which in turn requires `lxml`
+   > - `lxml` is a Python library that wraps the C libraries `libxml2` and `libxslt`
+   > - When installing `lxml` from source, it needs to compile these C extensions, requiring C++ build tools
+   > - If you want to avoid installing C++ build tools, you can use pre-built wheels:
+   >   ```powershell
+   >   pip install --only-binary :all: lxml
+   >   ```
+   > - Or follow the alternative installation methods in the Troubleshooting section
+
 ## Installation
 
 1. **Create and activate virtual environment**
-```bash
-# Windows
+```
+# Windows powershell
 python -m venv .venv
 .\.venv\Scripts\activate
+
 
 # Linux/Mac
 python -m venv .venv
@@ -37,6 +55,41 @@ source .venv/bin/activate
 ```bash
 pip install -r requirements.txt
 ```
+
+### Understanding Virtual Environments
+
+If you're new to Python, you might wonder why we use virtual environments. Here's why they're important:
+
+1. **What is a Virtual Environment?**
+   - A virtual environment is like a separate, isolated container for your Python project
+   - It has its own Python interpreter and package installations
+   - It keeps your project's dependencies separate from other projects and your system Python
+
+2. **Why Use Virtual Environments?**
+   - **Isolation**: Different projects might need different versions of the same package
+     - Project A might need `requests==2.28.0`
+     - Project B might need `requests==2.31.0`
+     - Without virtual environments, you can only install one version globally
+   
+   - **Clean Environment**: Prevents conflicts between project dependencies
+     - No interference from globally installed packages
+     - Easy to recreate the exact same environment on another computer
+   
+   - **Project Portability**: Makes it easier to share your project
+     - All dependencies are listed in requirements files
+     - Others can recreate your exact environment
+   
+   - **System Protection**: Prevents messing up your system Python installation
+     - Experiments and 
+     
+     s are contained within the virtual environment
+     - Easy to delete and recreate if something goes wrong
+
+3. **When to Use Virtual Environments?**
+   - It's recommended to use a virtual environment for EVERY Python project
+   - This project specifically requires certain package versions to work correctly
+   - Virtual environments ensure these requirements don't conflict with other projects
+
 
 ## Configuration
 
@@ -105,39 +158,9 @@ python gui/main.py --test
 - Regularly rotate your API key if you suspect it has been compromised
 
 
-## About
+ 
 
-This package allows you to request garmin device, activity and health data from your Garmin Connect account.
-See <https://connect.garmin.com/>
-
-## Installation
-
-### Prerequisites
-
-1. **Python Installation**
-   - Download and install Python from [python.org](https://www.python.org/downloads/)
-   - During installation, make sure to check "Add Python to PATH"
-   - Recommended Python version: 3.11 or 3.12 (Python 3.13 may have compatibility issues)
-
-2. **Visual C++ Build Tools** (Required for Windows)
-   - Download from [Visual Studio Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/)
-   - During installation, select "Desktop development with C++"
-   - Required components:
-     - MSVC v143 build tools
-     - Windows 10/11 SDK
-     - C++ CMake tools
-   
-   > **Why are C++ Build Tools Required?**
-   > - This project depends on `withings-sync`, which in turn requires `lxml`
-   > - `lxml` is a Python library that wraps the C libraries `libxml2` and `libxslt`
-   > - When installing `lxml` from source, it needs to compile these C extensions, requiring C++ build tools
-   > - If you want to avoid installing C++ build tools, you can use pre-built wheels:
-   >   ```powershell
-   >   pip install --only-binary :all: lxml
-   >   ```
-   > - Or follow the alternative installation methods in the Troubleshooting section
-
-### Dependencies
+### Dependencies remark
 
 This project has several key dependencies:
 
@@ -157,62 +180,13 @@ This project has several key dependencies:
    - `pytest-cov`: For test coverage
    - `coverage`: For code coverage reporting
 
-
-### Understanding Virtual Environments
-
-If you're new to Python, you might wonder why we use virtual environments. Here's why they're important:
-
-1. **What is a Virtual Environment?**
-   - A virtual environment is like a separate, isolated container for your Python project
-   - It has its own Python interpreter and package installations
-   - It keeps your project's dependencies separate from other projects and your system Python
-
-2. **Why Use Virtual Environments?**
-   - **Isolation**: Different projects might need different versions of the same package
-     - Project A might need `requests==2.28.0`
-     - Project B might need `requests==2.31.0`
-     - Without virtual environments, you can only install one version globally
-   
-   - **Clean Environment**: Prevents conflicts between project dependencies
-     - No interference from globally installed packages
-     - Easy to recreate the exact same environment on another computer
-   
-   - **Project Portability**: Makes it easier to share your project
-     - All dependencies are listed in requirements files
-     - Others can recreate your exact environment
-   
-   - **System Protection**: Prevents messing up your system Python installation
-     - Experiments and 
-     
-     s are contained within the virtual environment
-     - Easy to delete and recreate if something goes wrong
-
-3. **When to Use Virtual Environments?**
-   - It's recommended to use a virtual environment for EVERY Python project
-   - This project specifically requires certain package versions to work correctly
-   - Virtual environments ensure these requirements don't conflict with other projects
-
-### Installation Steps
-
-#### Windows
-
-1. **Basic Setup**
-```powershell
-# Create and activate virtual environment
-python -m venv .venv
-.\.venv\Scripts\activate
-
-# If you get a PowerShell execution policy error, run:
-Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
-```
-
-2. **For Traditional Chinese Windows Users (or if you encounter encoding errors)**
+**For Traditional Chinese Windows Users (or if you encounter encoding errors)**
 ```powershell
 # Set UTF-8 encoding for pip
 $env:PYTHONUTF8=1
 
 # Install lxml first (to avoid compilation issues)
-pip install lxml==5.2.2
+pip install lxml
 
 
 # Install other dependencies
