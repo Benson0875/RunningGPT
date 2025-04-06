@@ -45,19 +45,48 @@ RunningGPT is an intelligent running analysis and coaching application that comb
 python -m venv .venv
 .\.venv\Scripts\activate
 
-
 # Linux/Mac
 python -m venv .venv
 source .venv/bin/activate
 ```
-
 2. **Install dependencies**
 ```bash
 pip install -r requirements.txt
 ```
 
-<<<<<<< Updated upstream
-=======
+If you're new to Python, you might wonder why we use virtual environments. Here's why they're important:
+
+- **What is a Virtual Environment?**
+   - A virtual environment is like a separate, isolated container for your Python project
+   - It has its own Python interpreter and package installations
+   - It keeps your project's dependencies separate from other projects and your system Python
+
+- **Why Use Virtual Environments?**
+   - **Isolation**: Different projects might need different versions of the same package
+     - Project A might need `requests==2.28.0`
+     - Project B might need `requests==2.31.0`
+     - Without virtual environments, you can only install one version globally
+   
+   - **Clean Environment**: Prevents conflicts between project dependencies
+     - No interference from globally installed packages
+     - Easy to recreate the exact same environment on another computer
+   
+   - **Project Portability**: Makes it easier to share your project
+     - All dependencies are listed in requirements files
+     - Others can recreate your exact environment
+   
+   - **System Protection**: Prevents messing up your system Python installation
+     - Experiments and 
+     
+     s are contained within the virtual environment
+     - Easy to delete and recreate if something goes wrong
+
+- **When to Use Virtual Environments?**
+   - It's recommended to use a virtual environment for EVERY Python project
+   - This project specifically requires certain package versions to work correctly
+   - Virtual environments ensure these requirements don't conflict with other projects
+
+
 ## Configuration
 
 1. **OpenAI API Setup**
@@ -87,153 +116,16 @@ pip install -r requirements.txt
 
 1. **Start the GUI Application**
 ```bash
+# Windows powershell
+python -m venv .venv
+.\.venv\Scripts\activate
+python gui/main.py
+
+# Linux/Mac
+python -m venv .venv
+source .venv/bin/activate
 python gui/main.py
 ```
-
-2. **Using the AI Assistant**
-   - Navigate through the wizard steps to analyze your running data
-   - Use the AI chat feature to:
-     - Discuss your training goals
-     - Get personalized recommendations
-     - Analyze your workout patterns
-     - Receive training plans
-
-## Features
-
-- **Data Analysis**: Automatically processes your Garmin Connect running data
-- **Visual Reports**: Generates detailed plots and statistics for each workout
-- **AI Coach**: Provides personalized training advice using OpenAI's GPT
-- **Progress Tracking**: Monitors your improvement over time
-- **Custom Training Plans**: Receives AI-generated training recommendations
-
-## Security Note
-
-- Keep your OpenAI API key secure and never share it
-- The `config.ini` file is included in `.gitignore` to prevent accidental exposure
-- Regularly rotate your API key if you suspect it has been compromised
-
-
-## About
-
-This package allows you to request garmin device, activity and health data from your Garmin Connect account.
-See <https://connect.garmin.com/>
-
-## Installation
-
-### Prerequisites
-
-1. **Python Installation**
-   - Download and install Python from [python.org](https://www.python.org/downloads/)
-   - During installation, make sure to check "Add Python to PATH"
-   - Recommended Python version: 3.11 or 3.12 (Python 3.13 may have compatibility issues)
-
-2. **Visual C++ Build Tools** (Required for Windows)
-   - Download from [Visual Studio Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/)
-   - During installation, select "Desktop development with C++"
-   - Required components:
-     - MSVC v143 build tools
-     - Windows 10/11 SDK
-     - C++ CMake tools
-   
-   > **Why are C++ Build Tools Required?**
-   > - This project depends on `withings-sync`, which in turn requires `lxml`
-   > - `lxml` is a Python library that wraps the C libraries `libxml2` and `libxslt`
-   > - When installing `lxml` from source, it needs to compile these C extensions, requiring C++ build tools
-   > - If you want to avoid installing C++ build tools, you can use pre-built wheels:
-   >   ```powershell
-   >   pip install --only-binary :all: lxml
-   >   ```
-   > - Or follow the alternative installation methods in the Troubleshooting section
-
-### Dependencies
-
-This project has several key dependencies:
-
-1. **Core Dependencies**
-   - `garth>=0.4.45`: For Garmin Connect authentication
-   - `requests`: For making HTTP requests
-   - `readchar`: For command-line interface
-
-2. **Data Processing Dependencies**
-   - `withings-sync>=4.2.4`: For data synchronization
-     - Requires `lxml` for XML processing
-     - `lxml` needs C++ build tools for compilation from source
-
-3. **Development Dependencies**
-   - `pytest`: For testing
-   - `pytest-vcr`: For recording HTTP interactions
-   - `pytest-cov`: For test coverage
-   - `coverage`: For code coverage reporting
-
-
->>>>>>> Stashed changes
-### Understanding Virtual Environments
-
-If you're new to Python, you might wonder why we use virtual environments. Here's why they're important:
-
-1. **What is a Virtual Environment?**
-   - A virtual environment is like a separate, isolated container for your Python project
-   - It has its own Python interpreter and package installations
-   - It keeps your project's dependencies separate from other projects and your system Python
-
-2. **Why Use Virtual Environments?**
-   - **Isolation**: Different projects might need different versions of the same package
-     - Project A might need `requests==2.28.0`
-     - Project B might need `requests==2.31.0`
-     - Without virtual environments, you can only install one version globally
-   
-   - **Clean Environment**: Prevents conflicts between project dependencies
-     - No interference from globally installed packages
-     - Easy to recreate the exact same environment on another computer
-   
-   - **Project Portability**: Makes it easier to share your project
-     - All dependencies are listed in requirements files
-     - Others can recreate your exact environment
-   
-   - **System Protection**: Prevents messing up your system Python installation
-     - Experiments and 
-     
-     s are contained within the virtual environment
-     - Easy to delete and recreate if something goes wrong
-
-3. **When to Use Virtual Environments?**
-   - It's recommended to use a virtual environment for EVERY Python project
-   - This project specifically requires certain package versions to work correctly
-   - Virtual environments ensure these requirements don't conflict with other projects
-
-
-## Configuration
-
-1. **OpenAI API Setup**
-   - Locate the `config.ini` file in the root directory
-   - Replace `YOUR_API_KEY` with your actual OpenAI API key:
-   ```config.ini
-      [OpenAI]
-      #Replace YOUR_API_KEY with your actual OpenAI API key
-      api_key = YOUR_API_KEY with your actual OpenAI API key
-      [App]
-      # Model to use for chat completion
-      model = gpt-4o-2024-08-06
-      #Maximum tokens for response
-      max_tokens = 1000
-      #Temperature for response generation (0.0 - 1.0)
-      temperature = 0.7 
-   ```
-   - Save the file
-
-2. **Application Settings**
-   - The `config.ini` file also contains other settings you can customize:
-     - `model`: The OpenAI model to use 
-     - `max_tokens`: Maximum response length (default: 1000)
-     - `temperature`: Response creativity (0.0-1.0, default: 0.7)
-
-## Running the Application
-
-1. **Start the GUI Application**
-```bash
-python gui/main.py
-```
-
 2. **Test Mode**
 ```bash
 # Run the application in test mode to skip authentication and directly view results
@@ -269,7 +161,6 @@ python gui/main.py --test
 - Regularly rotate your API key if you suspect it has been compromised
 
 
- 
 
 ### Dependencies remark
 
