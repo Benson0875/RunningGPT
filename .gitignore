@@ -189,4 +189,5 @@ USERNAMEPASSWORD.txt
 # OS specific
 .DS_Store
 Thumbs.db
+*.fit
 *.csv
