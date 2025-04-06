@@ -64,7 +64,19 @@ pip install -r requirements.txt
 python gui/main.py
 ```
 
-2. **Using the AI Assistant**
+2. **Test Mode**
+```bash
+# Run the application in test mode to skip authentication and directly view results
+python gui/main.py --test
+
+# The test mode will:
+# - Skip the authentication process
+# - Load existing workout data
+# - Jump directly to the results page
+# - Display workout cards and analysis
+```
+
+3. **Using the AI Assistant**
    - Navigate through the wizard steps to analyze your running data
    - Use the AI chat feature to:
      - Discuss your training goals
