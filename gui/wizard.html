@@ -1,0 +1,1405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Running Analysis Wizard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Windows 11 Design System */
+        :root {
+            --win11-bg: #f3f3f3;
+            --win11-accent: #0078d4;
+            --win11-text: #323130;
+            --win11-border: #e1e1e1;
+            --win11-shadow: rgba(0, 0, 0, 0.1);
+            --win11-hover: #f5f5f5;
+            --win11-active: #e5e5e5;
+        }
+
+        body {
+            font-family: 'Segoe UI Variable', 'Segoe UI', sans-serif;
+            background-color: var(--win11-bg);
+            color: var(--win11-text);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .wizard-container {
+            width: 960px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px var(--win11-shadow);
+            overflow: hidden;
+            padding-bottom: 0;
+        }
+
+        .wizard-header {
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--win11-border);
+        }
+
+        .wizard-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .wizard-content {
+            padding: 24px;
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+
+        .step {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--win11-border);
+        }
+
+        .step.active {
+            background: var(--win11-accent);
+        }
+
+        /* Step 1: Authentication */
+        .auth-form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .input-label {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .input-field {
+            padding: 12px;
+            border: 1px solid var(--win11-border);
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--win11-accent);
+        }
+
+        /* Step 2: Activity Selection */
+        .activity-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin: 24px 0;
+        }
+
+        .activity-button {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 24px;
+            border: 1px solid var(--win11-border);
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .activity-button:hover {
+            background: var(--win11-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px var(--win11-shadow);
+        }
+
+        .activity-button.selected {
+            border-color: var(--win11-accent);
+            background: var(--win11-hover);
+            box-shadow: 0 0 0 2px var(--win11-accent);
+        }
+
+        .activity-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+            color: var(--win11-accent);
+        }
+
+        /* Step 3: Workout Selection */
+        .workout-slider {
+            width: 100%;
+            margin: 24px 0;
+        }
+
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin: 20px 0;
+        }
+
+        .slider {
+            flex: 1;
+            height: 4px;
+            background: var(--win11-border);
+            border-radius: 2px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .slider-thumb {
+            width: 16px;
+            height: 16px;
+            background: var(--win11-accent);
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            cursor: grab;
+            transition: box-shadow 0.2s;
+        }
+
+        .slider-thumb:hover {
+            box-shadow: 0 0 0 6px rgba(0, 120, 212, 0.2);
+        }
+
+        .slider-thumb:active {
+            cursor: grabbing;
+            box-shadow: 0 0 0 8px rgba(0, 120, 212, 0.3);
+        }
+
+        /* Step 4: Processing */
+        .progress-container {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .progress-bar {
+            height: 4px;
+            background: var(--win11-border);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--win11-accent);
+            transition: width 0.3s;
+        }
+
+        .progress-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .progress-step {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .step-icon {
+            color: var(--win11-accent);
+        }
+
+        /* Step 5: Results */
+        .results-container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+        }
+
+        .chat-container {
+            background: white;
+            border-radius: 8px;
+            border: 1px solid var(--win11-border);
+            padding: 16px;
+        }
+
+        .workout-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .workout-card {
+            background: white;
+            border-radius: 8px;
+            border: 1px solid var(--win11-border);
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .workout-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px var(--win11-shadow);
+        }
+
+        .workout-details {
+            margin: 10px 0;
+        }
+
+        .workout-plots {
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        .workout-report {
+            margin-top: 15px;
+            text-align: right;
+        }
+
+        .report-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: var(--win11-accent);
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: opacity 0.2s;
+        }
+
+        .report-link:hover {
+            opacity: 0.9;
+        }
+
+        .workout-card-content {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        /* Navigation Buttons */
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 24px;
+        }
+
+        .button {
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .button-primary {
+            background: var(--win11-accent);
+            color: white;
+        }
+
+        .button-secondary {
+            background: transparent;
+            color: var(--win11-text);
+            border: 1px solid var(--win11-border);
+        }
+
+        .button:hover {
+            opacity: 0.9;
+        }
+
+        .button:active {
+            transform: scale(0.98);
+        }
+
+        /* Additional styles for new interactive elements */
+        .error-message {
+            color: #d83b01;
+            background: #fde7e9;
+            border: 1px solid #fdb8bd;
+            padding: 12px;
+            border-radius: 6px;
+            margin: 8px 0;
+            display: none;
+            font-size: 14px;
+        }
+
+        .input-field.error {
+            border-color: #d13438;
+        }
+
+        .slider-value {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--win11-accent);
+            margin-top: 8px;
+            text-align: center;
+        }
+
+        .chat-messages {
+            height: 300px;
+            overflow-y: auto;
+            margin-bottom: 16px;
+            padding: 12px;
+            border: 1px solid var(--win11-border);
+            border-radius: 6px;
+            background: white;
+        }
+
+        .message {
+            margin-bottom: 8px;
+            padding: 12px;
+            border-radius: 6px;
+            max-width: 80%;
+            white-space: pre-wrap;
+            line-height: 1.5;
+            font-size: 14px;
+        }
+
+        .message.user {
+            background: var(--win11-accent);
+            color: white;
+            margin-left: auto;
+        }
+
+        .message.assistant {
+            background: var(--win11-hover);
+            margin-right: auto;
+            white-space: pre-wrap;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .chart-container {
+            height: 200px;
+            margin-top: 16px;
+            position: relative;
+        }
+
+        .tooltip {
+            position: absolute;
+            background: white;
+            padding: 8px;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px var(--win11-shadow);
+            display: none;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Add these styles for the chat input container */
+        .chat-input-container {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .chat-input-container .input-field {
+            flex: 1;
+        }
+
+        .send-button {
+            background: var(--win11-accent);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .send-button:hover {
+            background: var(--win11-accent);
+            opacity: 0.9;
+        }
+
+        .send-button:active {
+            transform: scale(0.95);
+        }
+
+        .button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            margin-left: 8px;
+            border: 2px solid white;
+            border-top: 2px solid transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            margin-left: 8px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .button.primary {
+            background: var(--win11-accent);
+            color: white;
+        }
+
+        .button.primary:hover {
+            background: #006cc1;
+        }
+
+        .button.primary:active {
+            background: #005ba1;
+        }
+
+        .button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* Debug Panel Styles */
+        #debug-panel {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 400px;
+            height: 300px;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: #00ff00;
+            font-family: monospace;
+            font-size: 12px;
+            padding: 10px;
+            overflow-y: auto;
+            z-index: 1000;
+            border-top: 1px solid #00ff00;
+            border-left: 1px solid #00ff00;
+            display: none !important;
+        }
+        
+        #debug-panel.active {
+            display: none !important;
+        }
+        
+        #debug-messages {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            height: calc(100% - 30px);
+            overflow-y: auto;
+        }
+        
+        #debug-panel h3 {
+            color: #00ff00;
+            margin: 0 0 10px 0;
+            padding: 0;
+            font-size: 14px;
+        }
+
+        .debug-panel {
+            display: none !important;
+        }
+
+        /* Add styles for workout details view */
+        .workout-details-view {
+            padding: 20px;
+        }
+
+        .workout-details-content {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .workout-report-text {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid var(--win11-border);
+            white-space: pre-wrap;
+            font-family: monospace;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .workout-plots-full {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid var(--win11-border);
+            text-align: center;
+        }
+
+        .workout-plots-full img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+        }
+
+        .back-to-results {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .step-content {
+            position: relative;
+            min-height: 400px;
+        }
+
+        .workout-details-view {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--win11-bg);
+            z-index: 10;
+            overflow-y: auto;
+        }
+
+        .workout-details-content {
+            padding: 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .workout-report-text {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid var(--win11-border);
+            white-space: pre-wrap;
+            font-family: monospace;
+            margin-bottom: 20px;
+        }
+
+        .workout-plots-full {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid var(--win11-border);
+            text-align: center;
+        }
+
+        .workout-plots-full img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+        }
+
+        h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Add debug panel -->
+    <div id="debug-panel">
+        <h3>Debug Panel</h3>
+        <div id="debug-messages"></div>
+    </div>
+
+    <div class="wizard-container">
+        <div class="wizard-header">
+            <h1 class="wizard-title">Running Analysis Wizard</h1>
+        </div>
+        
+        <div class="wizard-content">
+            <!-- Step Indicator -->
+            <div class="step-indicator">
+                <div class="step active"></div>
+                <div class="step"></div>
+                <div class="step"></div>
+                <div class="step"></div>
+                <div class="step"></div>
+            </div>
+
+            <div class="step-content">
+                <!-- Step 1: Authentication -->
+                <div class="auth-form">
+                    <div class="input-group">
+                        <label class="input-label" for="email">Email</label>
+                        <input type="email" id="email" class="input-field" placeholder="Enter your Garmin Connect email">
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label" for="password">Password</label>
+                        <input type="password" id="password" class="input-field" placeholder="Enter your Garmin Connect password">
+                    </div>
+                    <div id="error-message" class="error-message" style="display: none;"></div>
+                    <button id="next-button" class="button primary" onclick="validateAuth()">
+                        <span>Next</span>
+                        <div id="loading-spinner" class="spinner" style="display: none;"></div>
+                    </button>
+                </div>
+
+                <!-- Step 2: Activity Selection -->
+                <div class="activity-selection" style="display: none;">
+                    <h2>Select Activity Type</h2>
+                    <div class="activity-grid">
+                        <div class="activity-button">
+                            <i class="fas fa-running activity-icon"></i>
+                            <span>Running</span>
+                        </div>
+                        <div class="activity-button">
+                            <i class="fas fa-bicycle activity-icon"></i>
+                            <span>Cycling</span>
+                        </div>
+                        <div class="activity-button">
+                            <i class="fas fa-swimmer activity-icon"></i>
+                            <span>Swimming</span>
+                        </div>
+                    </div>
+                    <div class="button-group">
+                        <button class="button button-secondary">Back</button>
+                        <button class="button button-primary">Next</button>
+                    </div>
+                </div>
+
+                <!-- Step 3: Workout Selection -->
+                <div class="workout-selection" style="display: none;">
+                    <h2>Select Number of Workouts</h2>
+                    <div class="workout-slider">
+                        <div class="slider-container">
+                            <span>1</span>
+                            <div class="slider">
+                                <div class="slider-thumb"></div>
+                            </div>
+                            <span>20</span>
+                        </div>
+                    </div>
+                    <div class="button-group">
+                        <button class="button button-secondary">Back</button>
+                        <button class="button button-primary">Next</button>
+                    </div>
+                </div>
+
+                <!-- Step 4: Processing -->
+                <div class="processing" style="display: none;">
+                    <h2>Processing Workouts</h2>
+                    <div class="progress-container">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 0%;"></div>
+                        </div>
+                        <div class="progress-steps">
+                            <div class="progress-step" data-step="download">
+                                <i class="fas fa-circle step-icon"></i>
+                                <span>Downloading FIT files</span>
+                            </div>
+                            <div class="progress-step" data-step="decode">
+                                <i class="fas fa-circle step-icon"></i>
+                                <span>Decoding FIT to CSV</span>
+                            </div>
+                            <div class="progress-step" data-step="analyze">
+                                <i class="fas fa-circle step-icon"></i>
+                                <span>Analyzing workout data</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="button-group">
+                        <button class="button button-secondary cancel-button">Cancel</button>
+                        <button class="button button-primary next-button" style="display: none;">Next</button>
+                    </div>
+                </div>
+
+                <!-- Step 5: Results -->
+                <div class="results" style="display: none;">
+                    <div class="results-container">
+                        <div class="chat-container">
+                            <h3>AI Assistant</h3>
+                            <div class="chat-messages">
+                                <!-- Chat messages will be added here -->
+                            </div>
+                            <div class="chat-input-container">
+                                <input type="text" class="input-field" placeholder="Ask about your training...">
+                                <button class="send-button">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="workout-cards">
+                            <!-- Workout cards will be added here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Workout Details View -->
+                <div class="workout-details-view" style="display: none;">
+                    <div class="button-group" style="margin-bottom: 20px;">
+                        <button class="button button-secondary back-to-results">
+                            <i class="fas fa-arrow-left"></i> Back to Results
+                        </button>
+                    </div>
+                    <div class="workout-details-content">
+                        <div class="workout-report-text">
+                            <!-- Report text content will be loaded here -->
+                        </div>
+                        <div class="workout-plots-full">
+                            <!-- Full-size plot will be shown here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Debug logging function
+        function log(message) {
+            console.log(message);
+            const debugDiv = document.getElementById('debug-messages');
+            if (debugDiv) {
+                const p = document.createElement('p');
+                p.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+                debugDiv.appendChild(p);
+                debugDiv.scrollTop = debugDiv.scrollHeight;
+            }
+        }
+
+        // Initialize when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            log('=== Page Loaded ===');
+            log('Checking pywebview availability...');
+            
+            // Wait for pywebview to be available
+            const checkPyWebView = setInterval(() => {
+                if (window.pywebview) {
+                    clearInterval(checkPyWebView);
+                    log('pywebview is available');
+                    
+                    // Check if API functions are available
+                    if (window.pywebview.api) {
+                        const apiFunctions = Object.getOwnPropertyNames(Object.getPrototypeOf(window.pywebview.api));
+                        log('API functions available: ' + apiFunctions.join(', '));
+                        
+                        // Verify each required function exists
+                        const requiredFunctions = ['authenticate', 'select_activity', 'set_workout_count', 'process_workouts', 'analyze_message'];
+                        const missingFunctions = requiredFunctions.filter(fn => !apiFunctions.includes(fn));
+                        
+                        if (missingFunctions.length === 0) {
+                            log('All required API functions are available');
+                        } else {
+                            log('ERROR: Missing API functions: ' + missingFunctions.join(', '));
+                        }
+                    } else {
+                        log('ERROR: window.pywebview.api is not available');
+                    }
+                }
+            }, 100);
+            
+            // Add click event listener to Next button
+            const nextButton = document.getElementById('next-button');
+            if (nextButton) {
+                log('Next button found, adding click event listener');
+                nextButton.addEventListener('click', function(e) {
+                    log('Next button clicked');
+                    e.preventDefault(); // Prevent form submission
+                    validateAuth();
+                });
+            } else {
+                log('ERROR: Next button not found');
+            }
+            
+            // State management
+            let currentStep = 1;
+            let selectedActivity = null;
+            let workoutCount = 1;
+            let workoutsData = null;
+
+            // DOM Elements
+            const steps = document.querySelectorAll('.step');
+            const stepSections = [
+                document.querySelector('.auth-form'),
+                document.querySelector('.activity-selection'),
+                document.querySelector('.workout-selection'),
+                document.querySelector('.processing'),
+                document.querySelector('.results')
+            ];
+
+            // Navigation functions
+            function updateStepIndicator() {
+                steps.forEach((step, index) => {
+                    step.classList.toggle('active', index + 1 === currentStep);
+                });
+            }
+
+            function showStep(stepNumber) {
+                stepSections.forEach((section, index) => {
+                    section.style.display = index + 1 === stepNumber ? 'block' : 'none';
+                });
+                updateStepIndicator();
+            }
+
+            function nextStep() {
+                if (currentStep < 5) {
+                    currentStep++;
+                    showStep(currentStep);
+                }
+            }
+
+            function prevStep() {
+                if (currentStep > 1) {
+                    currentStep--;
+                    showStep(currentStep);
+                }
+            }
+
+            // Error message display function
+            function showError(message) {
+                log(`Showing error message: ${message}`);
+                const errorDiv = document.getElementById('error-message');
+                if (errorDiv) {
+                    errorDiv.textContent = message;
+                    errorDiv.style.display = 'block';
+                    setTimeout(() => {
+                        errorDiv.style.display = 'none';
+                    }, 5000);
+                } else {
+                    log('ERROR: Error message div not found');
+                }
+            }
+
+            // Authentication handling
+            async function validateAuth() {
+                log('=== Starting Authentication Process ===');
+                
+                if (!window.pywebview || !window.pywebview.api) {
+                    log('ERROR: pywebview API is not available');
+                    showError('Connection to backend failed. Please restart the application.');
+                    return;
+                }
+
+                const nextButton = document.getElementById('next-button');
+                const loadingSpinner = document.getElementById('loading-spinner');
+                const emailInput = document.getElementById('email');
+                const passwordInput = document.getElementById('password');
+
+                if (!nextButton || !loadingSpinner || !emailInput || !passwordInput) {
+                    log('ERROR: Required elements not found');
+                    return;
+                }
+
+                // Validate inputs
+                const email = emailInput.value.trim();
+                const password = passwordInput.value.trim();
+
+                if (!email || !password) {
+                    showError('Please enter both email and password');
+                    return;
+                }
+
+                try {
+                    // Show loading state
+                    nextButton.disabled = true;
+                    loadingSpinner.style.display = 'inline-block';
+                    log('Attempting authentication with provided credentials...');
+
+                    // Attempt authentication with user input
+                    log('Calling pywebview.api.authenticate...');
+                    const result = await window.pywebview.api.authenticate(email, password);
+                    log(`Backend response received: ${JSON.stringify(result)}`);
+                    
+                    if (result.success) {
+                        log('Authentication successful, proceeding to next step');
+                        // Proceed to next step
+                        currentStep++;
+                        showStep(currentStep);
+                    } else {
+                        log(`Authentication failed: ${result.message}`);
+                        showError(result.message);
+                    }
+                } catch (error) {
+                    log(`ERROR during authentication: ${error.message}`);
+                    log(`Error stack: ${error.stack}`);
+                    showError('Authentication failed: ' + error.message);
+                } finally {
+                    // Reset button state
+                    nextButton.disabled = false;
+                    loadingSpinner.style.display = 'none';
+                    log('=== Authentication Process Completed ===');
+                }
+            }
+
+            // Activity selection
+            const activityButtons = document.querySelectorAll('.activity-button');
+            const activityNextButton = document.querySelector('.activity-selection .button-primary');
+
+            activityButtons.forEach(button => {
+                button.addEventListener('click', async () => {
+                    activityButtons.forEach(btn => btn.classList.remove('selected'));
+                    button.classList.add('selected');
+                    const activityType = button.querySelector('span').textContent;
+                    selectedActivity = activityType;
+                    await pywebview.api.select_activity(activityType);
+                });
+            });
+
+            // Workout slider
+            const slider = document.querySelector('.slider');
+            const sliderThumb = document.querySelector('.slider-thumb');
+            const sliderValue = document.createElement('div');
+            sliderValue.className = 'slider-value';
+            slider.parentNode.insertBefore(sliderValue, slider.nextSibling);
+
+            let isDragging = false;
+
+            async function updateSliderValue(event) {
+                const rect = slider.getBoundingClientRect();
+                const x = Math.max(0, Math.min(event.clientX - rect.left, rect.width));
+                const percentage = (x / rect.width) * 100;
+                workoutCount = Math.round(1 + (percentage / 100) * 19);
+                sliderThumb.style.left = `${percentage}%`;
+                sliderValue.textContent = `${workoutCount} workouts`;
+                await pywebview.api.set_workout_count(workoutCount);
+            }
+
+            function startDragging(e) {
+                isDragging = true;
+                updateSliderValue(e);
+                document.addEventListener('mousemove', updateSliderValue);
+                document.addEventListener('mouseup', stopDragging);
+            }
+
+            function stopDragging() {
+                isDragging = false;
+                document.removeEventListener('mousemove', updateSliderValue);
+                document.removeEventListener('mouseup', stopDragging);
+            }
+
+            slider.addEventListener('mousedown', startDragging);
+            sliderThumb.addEventListener('mousedown', startDragging);
+
+            // Initialize slider position
+            function initializeSlider() {
+                const rect = slider.getBoundingClientRect();
+                updateSliderValue({ clientX: rect.left });
+            }
+
+            // Processing simulation
+            const progressFill = document.querySelector('.progress-fill');
+            const progressSteps = document.querySelectorAll('.progress-step');
+            const cancelButton = document.querySelector('.cancel-button');
+
+            async function processWorkouts() {
+                log('=== Starting Workout Processing ===');
+                
+                const progressBar = document.querySelector('.progress-fill');
+                const progressSteps = document.querySelectorAll('.progress-step');
+                const cancelButton = document.querySelector('.cancel-button');
+                const nextButton = document.querySelector('.processing .next-button');
+                
+                try {
+                    // Hide next button and disable cancel button during processing
+                    if (nextButton) nextButton.style.display = 'none';
+                    if (cancelButton) cancelButton.disabled = true;
+
+                    // Reset progress
+                    progressBar.style.width = '0%';
+                    progressSteps.forEach(step => {
+                        step.classList.remove('active');
+                        step.querySelector('.step-icon').className = 'fas fa-circle step-icon';
+                    });
+
+                    // Update UI to show downloading state
+                    progressBar.style.width = '33%';
+                    progressSteps[0].classList.add('active');
+                    progressSteps[0].querySelector('.step-icon').className = 'fas fa-spinner fa-spin step-icon';
+                    log('Downloading FIT files...');
+                    
+                    // Call backend to process workouts
+                    const result = await window.pywebview.api.process_workouts();
+                    log(`Backend response: ${JSON.stringify(result)}`);
+                    
+                    if (result.success) {
+                        // Mark download as complete
+                        progressSteps[0].querySelector('.step-icon').className = 'fas fa-check-circle step-icon';
+                        
+                        // Show decoding progress
+                        progressBar.style.width = '66%';
+                        progressSteps[1].classList.add('active');
+                        progressSteps[1].querySelector('.step-icon').className = 'fas fa-check-circle step-icon';
+                        log('FIT files decoded to CSV');
+                        
+                        // Show analysis progress
+                        progressBar.style.width = '100%';
+                        progressSteps[2].classList.add('active');
+                        progressSteps[2].querySelector('.step-icon').className = 'fas fa-check-circle step-icon';
+                        log('Workout data analyzed');
+                        
+                        // Store workout data
+                        workoutsData = result.workouts;
+                        
+                        // Show next button and update button states
+                        if (nextButton) {
+                            nextButton.style.display = 'block';
+                            nextButton.onclick = () => {
+                                currentStep++;
+                                showStep(currentStep);
+                                updateWorkoutCards(result.workouts);
+                            };
+                        }
+                        if (cancelButton) cancelButton.disabled = false;
+                        
+                        log('Processing complete. Click Next to continue.');
+                    } else {
+                        throw new Error(result.message);
+                    }
+                } catch (error) {
+                    log(`ERROR: ${error.message}`);
+                    showError(error.message);
+                    // Reset progress
+                    progressBar.style.width = '0%';
+                    progressSteps.forEach(step => {
+                        step.classList.remove('active');
+                        step.querySelector('.step-icon').className = 'fas fa-circle step-icon';
+                    });
+                    // Enable cancel button and hide next button
+                    if (cancelButton) cancelButton.disabled = false;
+                    if (nextButton) nextButton.style.display = 'none';
+                }
+            }
+
+            window.updateWorkoutCards = function(workouts) {
+                console.log('updateWorkoutCards called with:', workouts);
+                
+                const workoutCardsContainer = document.querySelector('.workout-cards');
+                if (!workoutCardsContainer) {
+                    console.error('Workout cards container not found');
+                    return;
+                }
+                
+                workoutCardsContainer.innerHTML = '';
+                
+                if (!workouts || workouts.length === 0) {
+                    console.log('No workouts data available');
+                    workoutCardsContainer.innerHTML = '<div class="no-data">No workout data available</div>';
+                    return;
+                }
+                
+                workouts.forEach(workout => {
+                    const card = document.createElement('div');
+                    card.className = 'workout-card fade-in';
+                    
+                    // Create the plot image section
+                    const plotFilename = workout.plot_path.split('\\').pop();
+                    const plotHtml = `
+                        <div class="workout-plots">
+                            <img src="../workout_plots/${plotFilename}"
+                                 alt="Workout Analysis Plots"
+                                 style="width: 100%; height: auto; margin-top: 10px; border-radius: 4px;"
+                                 onerror="this.style.display='none'">
+                        </div>
+                    `;
+                    
+                    // Create the report link section
+                    const reportFilename = workout.report_path.split('\\').pop();
+                    const reportHtml = `
+                        <div class="workout-report">
+                            <button class="report-link button primary" data-report="${reportFilename}" data-plot="${plotFilename}">
+                                <i class="fas fa-file-alt"></i> View Detailed Report
+                            </button>
+                        </div>
+                    `;
+                    
+                    const detailsHtml = `
+                        <div class="workout-card-content">
+                            <h3>${workout.type} - ${workout.date}</h3>
+                            <div class="workout-details">
+                                <p>Distance: ${workout.distance.toFixed(2)}km</p>
+                                <p>Duration: ${workout.duration}</p>
+                                <p>Pace: ${workout.pace} min/km</p>
+                                <p>Avg Cadence: ${workout.cadence} spm</p>
+                                <p>Heart Rate: ${workout.average_hr} bpm</p>
+                                <p>Max Heart Rate: ${workout.max_hr} bpm)</p>
+                                <p>Elevation Gain: ${workout.elevation_gain}m</p>   
+                            </div>
+                            ${plotHtml}
+                            ${reportHtml}
+                        </div>
+                    `;
+                    
+                    card.innerHTML = detailsHtml;
+                    workoutCardsContainer.appendChild(card);
+                });
+
+                // Add event listeners for report buttons
+                document.querySelectorAll('.report-link').forEach(button => {
+                    button.addEventListener('click', async function() {
+                        const reportFile = this.dataset.report;
+                        const plotFile = this.dataset.plot;
+                        await showWorkoutDetails(reportFile, plotFile);
+                    });
+                });
+            };
+
+            // Function to show workout details view
+            async function showWorkoutDetails(reportFile, plotFile) {
+                try {
+                    console.log('Opening workout details:', { reportFile, plotFile });
+                    
+                    // Hide all step content
+                    document.querySelectorAll('.step-content > div').forEach(div => {
+                        if (div.style.display !== 'none') {
+                            // Store the last visible step for returning later
+                            div.dataset.wasVisible = 'true';
+                        }
+                        div.style.display = 'none';
+                    });
+                    
+                    // Show details view
+                    const detailsView = document.querySelector('.workout-details-view');
+                    detailsView.style.display = 'block';
+
+                    // Load report text using API
+                    console.log('Reading report file:', reportFile);
+                    const reportResult = await window.pywebview.api.read_report_file(reportFile);
+                    if (!reportResult.success) {
+                        throw new Error(`Failed to load report: ${reportResult.message}`);
+                    }
+                    console.log('Report loaded, length:', reportResult.content.length);
+                    document.querySelector('.workout-report-text').textContent = reportResult.content;
+
+                    // Load plot using API
+                    console.log('Reading plot file:', plotFile);
+                    const plotResult = await window.pywebview.api.read_plot_file(plotFile);
+                    if (!plotResult.success) {
+                        throw new Error(`Failed to load plot: ${plotResult.message}`);
+                    }
+                    console.log('Plot loaded successfully');
+                    
+                    // Display plot using base64 data
+                    document.querySelector('.workout-plots-full').innerHTML = `
+                        <img src="data:image/png;base64,${plotResult.data}" 
+                             alt="Workout Analysis Plots" 
+                             style="max-width: 100%; height: auto;"
+                             onload="console.log('Plot image displayed successfully')"
+                             onerror="console.error('Failed to display plot image')"
+                             >
+                    `;
+
+                    // Add event listener for back button if not already added
+                    const backButton = document.querySelector('.back-to-results');
+                    if (!backButton.hasEventListener) {
+                        backButton.addEventListener('click', () => {
+                            // Hide details view
+                            detailsView.style.display = 'none';
+                            
+                            // Hide all other views first
+                            document.querySelectorAll('.step-content > div').forEach(div => {
+                                div.style.display = 'none';
+                                // Clear the wasVisible flag
+                                delete div.dataset.wasVisible;
+                            });
+                            
+                            // Show only the results view
+                            const resultsView = document.querySelector('.results');
+                            resultsView.style.display = 'block';
+                            
+                            // Update step indicator to show we're on step 5
+                            const steps = document.querySelectorAll('.step-indicator .step');
+                            steps.forEach((step, index) => {
+                                step.classList.toggle('active', index === 4); // 4 is the index for step 5
+                            });
+                            
+                            // Update current step
+                            currentStep = 5;
+                        });
+                        backButton.hasEventListener = true;
+                    }
+                } catch (error) {
+                    console.error('Error in showWorkoutDetails:', error);
+                    showError(`Failed to load workout details: ${error.message}`);
+                    // Return to results view on error
+                    document.querySelector('.workout-details-view').style.display = 'none';
+                    document.querySelector('.results').style.display = 'block';
+                }
+            }
+
+            // Function to update progress dots
+            function updateProgressDots(currentStep) {
+                const dots = document.querySelectorAll('.progress-dots .dot');
+                dots.forEach((dot, index) => {
+                    if (index === currentStep) {
+                        dot.classList.add('active');
+                    } else {
+                        dot.classList.remove('active');
+                    }
+                });
+            }
+
+            function formatDuration(seconds) {
+                const hours = Math.floor(seconds / 3600);
+                const minutes = Math.floor((seconds % 3600) / 60);
+                const remainingSeconds = seconds % 60;
+                
+                if (hours > 0) {
+                    return `${hours}:${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+                }
+                return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+            }
+
+            // Chat functionality
+            const chatMessages = document.querySelector('.chat-messages');
+            const chatInput = document.querySelector('.chat-input-container input');
+            const sendButton = document.querySelector('.send-button');
+
+            async function sendMessage() {
+                console.log('Attempting to send message...');
+                const input = chatInput;
+                const message = input.value.trim();
+                
+                if (!message) {
+                    console.log('No message to send');
+                    return;
+                }
+                
+                console.log('Sending message:', message);
+                input.disabled = true;
+                sendButton.disabled = true;
+                
+                try {
+                    console.log('Calling pywebview.api.analyze_message...');
+                    const result = await window.pywebview.api.analyze_message(message);
+                    console.log('Got response:', result);
+                    
+                    if (result.success) {
+                        // Add user message
+                        const userMessage = document.createElement('div');
+                        userMessage.className = 'message user fade-in';
+                        userMessage.textContent = message;
+                        document.querySelector('.chat-messages').appendChild(userMessage);
+                        
+                        // Add assistant response
+                        const assistantMessage = document.createElement('div');
+                        assistantMessage.className = 'message assistant fade-in';
+                        assistantMessage.textContent = result.response;
+                        document.querySelector('.chat-messages').appendChild(assistantMessage);
+                        
+                        // Clear input
+                        input.value = '';
+                    } else {
+                        console.error('Error from backend:', result.message);
+                        const errorMessage = document.createElement('div');
+                        errorMessage.className = 'message error fade-in';
+                        errorMessage.textContent = `Error: ${result.message}`;
+                        document.querySelector('.chat-messages').appendChild(errorMessage);
+                    }
+                } catch (error) {
+                    console.error('Error sending message:', error);
+                    const errorMessage = document.createElement('div');
+                    errorMessage.className = 'message error fade-in';
+                    errorMessage.textContent = `Error: ${error.message}`;
+                    document.querySelector('.chat-messages').appendChild(errorMessage);
+                } finally {
+                    input.disabled = false;
+                    sendButton.disabled = false;
+                    input.focus();
+                }
+            }
+
+            // Add event listeners
+            chatInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    console.log('Enter key pressed in chat input');
+                    sendMessage();
+                }
+            });
+
+            sendButton.addEventListener('click', () => {
+                console.log('Send button clicked');
+                sendMessage();
+            });
+
+            // Event listeners for navigation
+            activityNextButton.addEventListener('click', () => {
+                if (selectedActivity) {
+                    nextStep();
+                } else {
+                    alert('Please select an activity type');
+                }
+            });
+
+            document.querySelector('.workout-selection .button-primary').addEventListener('click', async () => {
+                // First transition to the processing step
+                currentStep++;
+                showStep(currentStep);
+                
+                // Then start the processing
+                await processWorkouts();
+            });
+
+            document.querySelectorAll('.button-secondary').forEach(button => {
+                button.addEventListener('click', prevStep);
+            });
+
+            // Initialize
+            showStep(1);
+            initializeSlider();
+
+            // Debug Panel Toggle
+            const debugPanel = document.getElementById('debug-panel');
+            if (debugPanel) {
+                debugPanel.classList.add('active'); // Make debug panel visible by default
+                debugPanel.style.display = 'block'; // Ensure it's visible
+                log('Debug panel initialized and visible');
+            } else {
+                console.error('Debug panel element not found');
+            }
+        });
+    </script>
+</body>
+</html> 
