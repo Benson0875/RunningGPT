@@ -87,85 +87,6 @@ python gui/main.py
 - Regularly rotate your API key if you suspect it has been compromised
 
 
-# Python: Garmin Connect
-
-```bash
-$ ./example.py
-*** Garmin Connect API Demo by cyberjunky ***
-
-Trying to login to Garmin Connect using token data from directory '~/.garminconnect'...
-
-1 -- Get full name
-2 -- Get unit system
-3 -- Get activity data for '2024-11-10'
-4 -- Get activity data for '2024-11-10' (compatible with garminconnect-ha)
-5 -- Get body composition data for '2024-11-10' (compatible with garminconnect-ha)
-6 -- Get body composition data for from '2024-11-03' to '2024-11-10' (to be compatible with garminconnect-ha)
-7 -- Get stats and body composition data for '2024-11-10'
-8 -- Get steps data for '2024-11-10'
-9 -- Get heart rate data for '2024-11-10'
-0 -- Get training readiness data for '2024-11-10'
-- -- Get daily step data for '2024-11-03' to '2024-11-10'
-/ -- Get body battery data for '2024-11-03' to '2024-11-10'
-! -- Get floors data for '2024-11-03'
-? -- Get blood pressure data for '2024-11-03' to '2024-11-10'
-. -- Get training status data for '2024-11-10'
-a -- Get resting heart rate data for '2024-11-10'
-b -- Get hydration data for '2024-11-10'
-c -- Get sleep data for '2024-11-10'
-d -- Get stress data for '2024-11-10'
-e -- Get respiration data for '2024-11-10'
-f -- Get SpO2 data for '2024-11-10'
-g -- Get max metric data (like vo2MaxValue and fitnessAge) for '2024-11-10'
-h -- Get personal record for user
-i -- Get earned badges for user
-j -- Get adhoc challenges data from start '0' and limit '100'
-k -- Get available badge challenges data from '1' and limit '100'
-l -- Get badge challenges data from '1' and limit '100'
-m -- Get non completed badge challenges data from '1' and limit '100'
-n -- Get activities data from start '0' and limit '100'
-o -- Get last activity
-p -- Download activities data by date from '2024-11-03' to '2024-11-10'
-r -- Get all kinds of activities data from '0'
-s -- Upload activity data from file 'MY_ACTIVITY.fit'
-t -- Get all kinds of Garmin device info
-u -- Get active goals
-v -- Get future goals
-w -- Get past goals
-y -- Get all Garmin device alarms
-x -- Get Heart Rate Variability data (HRV) for '2024-11-10'
-z -- Get progress summary from '2024-11-03' to '2024-11-10' for all metrics
-A -- Get gear, the defaults, activity types and statistics
-B -- Get weight-ins from '2024-11-03' to '2024-11-10'
-C -- Get daily weigh-ins for '2024-11-10'
-D -- Delete all weigh-ins for '2024-11-10'
-E -- Add a weigh-in of 89.6kg on '2024-11-10'
-F -- Get virtual challenges/expeditions from '2024-11-03' to '2024-11-10'
-G -- Get hill score data from '2024-11-03' to '2024-11-10'
-H -- Get endurance score data from '2024-11-03' to '2024-11-10'
-I -- Get activities for date '2024-11-10'
-J -- Get race predictions
-K -- Get all day stress data for '2024-11-10'
-L -- Add body composition for '2024-11-10'
-M -- Set blood pressure "120,80,80,notes='Testing with example.py'"
-N -- Get user profile/settings
-O -- Reload epoch data for '2024-11-10'
-P -- Get workouts 0-100, get and download last one to .FIT file
-R -- Get solar data from your devices
-S -- Get pregnancy summary data
-T -- Add hydration data
-U -- Get Fitness Age data for '2024-11-10'
-V -- Get daily wellness events data for '2024-11-03'
-W -- Get userprofile settings
-Z -- Remove stored login tokens (logout)
-q -- Exit
-Make your selection: 
-```
-
-[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/cyberjunky/)
-
-Python 3 API wrapper for Garmin Connect.
-
 ## About
 
 This package allows you to request garmin device, activity and health data from your Garmin Connect account.
@@ -218,17 +139,6 @@ This project has several key dependencies:
    - `pytest-cov`: For test coverage
    - `coverage`: For code coverage reporting
 
-   Run tests:
-   ```bash
-   # Run basic tests
-   pytest tests/
-
-   # Run tests with verbose output
-   pytest tests/ -v
-
-   # Run tests with coverage report
-   pytest tests/ -v --cov=. --cov-report=term-missing
-   ```
 
 ### Understanding Virtual Environments
 
@@ -254,7 +164,9 @@ If you're new to Python, you might wonder why we use virtual environments. Here'
      - Others can recreate your exact environment
    
    - **System Protection**: Prevents messing up your system Python installation
-     - Experiments and tests are contained within the virtual environment
+     - Experiments and 
+     
+     s are contained within the virtual environment
      - Easy to delete and recreate if something goes wrong
 
 3. **When to Use Virtual Environments?**
@@ -284,6 +196,7 @@ $env:PYTHONUTF8=1
 # Install lxml first (to avoid compilation issues)
 pip install lxml==5.2.2
 
+
 # Install other dependencies
 pip install garth==0.4.46 requests==2.31.0 python-dotenv
 pip install withings-sync==4.2.7 --no-deps
@@ -294,6 +207,7 @@ pip install -r requirements-dev.txt
 3. **For Other Windows Users**
 ```powershell
 # Regular installation
+pip install -r requirements.txt
 pip install -r requirements-dev.txt
 pip install -r requirements-test.txt
 ```
@@ -376,9 +290,11 @@ NOTE: We obtain the OAuth tokens using the consumer key and secret as the Connec
 3. **Interactive Login**
    - If no credentials are provided through the above methods
    - The script will prompt you to enter credentials manually
+
    
 4. **Environment Variables** (Optional, for development)
    You can set environment variables to avoid entering credentials repeatedly during development:
+
 ### Setting Environment Variables
 
 #### Windows (PowerShell)
@@ -403,6 +319,72 @@ export EMAIL=<your garmin email>
 export PASSWORD=<your garmin password>
 export GARMINTOKENS=~/.garminconnect
 ```
+
+## Testing
+
+### Prerequisites for Testing
+Before running tests, make sure you have:
+1. All test dependencies installed:
+   ```powershell
+   pip install pytest pytest-vcr pytest-cov coverage
+   ```
+2. The `GARMINTOKENS` environment variable set:
+   ```powershell
+   # Windows (PowerShell)
+   $env:GARMINTOKENS="C:\Users\$env:USERNAME\.garminconnect"
+   
+   # Linux/macOS
+   export GARMINTOKENS=~/.garminconnect
+   ```
+
+### Running Tests
+
+#### Windows
+```powershell
+# Make sure you're in your virtual environment
+.\.venv\Scripts\activate
+
+# Set environment variable and run tests in one command
+$env:GARMINTOKENS="C:\Users\$env:USERNAME\.garminconnect"; python -m pytest tests/
+
+# Or set environment variable permanently (recommended for development):
+# 1. Open System Properties (Windows + R, type sysdm.cpl)
+# 2. Go to Advanced tab -> Environment Variables
+# 3. Under User variables, add GARMINTOKENS with value C:\Users\YOUR_USERNAME\.garminconnect
+```
+
+#### Linux/macOS
+```bash
+# Set environment variable
+export GARMINTOKENS=~/.garminconnect
+
+# Install pytest if needed
+sudo apt install python3-pytest  # needed on some distros
+
+# Run tests
+make install-test
+make test
+```
+
+### Troubleshooting Tests
+
+1. **Missing GARMINTOKENS Environment Variable**
+   If you see this error:
+   ```
+   AssertionError: assert 'GARMINTOKENS' in environ(...)
+   ```
+   Make sure to set the GARMINTOKENS environment variable as shown above.
+
+2. **Test Dependencies**
+   If you encounter missing package errors:
+   ```powershell
+   pip install pytest pytest-vcr pytest-cov coverage
+   ```
+
+3. **VCR Cassette Errors**
+   If tests fail due to VCR cassette issues:
+   - Delete the `tests/cassettes` directory
+   - Run the tests again to generate new cassettes
 
 ## Development
 
