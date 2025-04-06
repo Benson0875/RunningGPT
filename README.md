@@ -56,8 +56,7 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-<<<<<<< Updated upstream
-=======
+
 ## Configuration
 
 1. **OpenAI API Setup**
